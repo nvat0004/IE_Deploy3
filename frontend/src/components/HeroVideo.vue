@@ -92,7 +92,7 @@ const scrollToFeatures = () => {
 .hero-video-container {
   position: relative;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -100,23 +100,43 @@ const scrollToFeatures = () => {
   margin: 0;
   padding: 0;
   max-height: 100vh;
-  max-width: 100vw;
+  max-width: 100%;
   min-height: 100vh;
-  min-width: 100vw;
+  min-width: 100%;
+  transition: all 0.8s ease-in-out;
+}
+
+.hero-video-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(240, 248, 255, 0.1) 20%,
+    rgba(240, 248, 255, 0.3) 50%,
+    rgba(240, 248, 255, 0.6) 80%,
+    rgba(240, 248, 255, 0.8) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
 }
 
 .hero-video {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   object-fit: cover;
   object-position: center;
   z-index: 1;
-  max-width: 100vw;
+  max-width: 100%;
   max-height: 100vh;
-  min-width: 100vw;
+  min-width: 100%;
   min-height: 100vh;
 }
 
@@ -124,7 +144,7 @@ const scrollToFeatures = () => {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   background: rgba(0, 0, 0, 0.4);
   z-index: 2;

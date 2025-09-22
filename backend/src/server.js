@@ -1,3 +1,4 @@
+
 // ✅ server.js — ES Module Compatible
 import express from "express";
 import mysql from "mysql2/promise";
@@ -111,3 +112,4 @@ app.get("/api/predict", async (req, res) => {
 app.listen(port, () => {
   console.log(`✅ Server running on port ${port}`);
 });
+

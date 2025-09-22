@@ -1,5 +1,6 @@
 <template>
   <main class="education-wrapper">
+    <div class="page-background"></div>
     <section>
       <h2>Minerals</h2>
       <div class="carousel">
@@ -65,6 +66,12 @@
         <p>{{ selected.blurb }}</p>
       </div>
     </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <small>© 2025 AquaProtect - TA22 Team </small>
+      <small>Keeping families safe at Beaches</small>
+    </footer>
   </main>
 </template>
 
@@ -185,5 +192,120 @@ const bacteria: EduItem[] = [
 .overlay-text {
   max-width: 600px;
   text-align: center;
+}
+
+/* Page Background */
+.page-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('@/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -2;
+}
+
+.page-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.2) 15%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.05) 60%,
+    rgba(0, 0, 0, 0.1) 70%,
+    rgba(0, 0, 0, 0.2) 85%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Update main wrapper */
+.education-wrapper {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: 2rem 0 0 0;
+}
+
+/* Update section styling */
+.education-wrapper section {
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 248, 255, 0.95) 0%,
+    rgba(248, 250, 252, 0.98) 20%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.education-wrapper h2 {
+  background: linear-gradient(135deg, #0891b2, #06b6d4, #67e8f9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Update card styling */
+.edu-card {
+  background: linear-gradient(135deg, rgba(240, 248, 255, 0.8), rgba(255, 255, 255, 0.9));
+  border: 1px solid rgba(8, 145, 178, 0.2);
+  box-shadow: 0 4px 16px rgba(8, 145, 178, 0.1);
+  transition: all 0.3s ease;
+}
+
+.edu-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.2);
+  border-color: rgba(8, 145, 178, 0.3);
+}
+
+/* Footer */
+.footer {
+  background: #1e293b;
+  color: white;
+  padding: 3rem 0 1rem;
+  margin: 2rem 0 0 0;
+  position: relative;
+  z-index: 2;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  box-sizing: border-box;
+}
+
+.footer small {
+  display: block;
+  text-align: center;
+  color: #94a3b8;
+  margin: 0.25rem 0;
+}
+
+.footer small:first-child {
+  font-weight: 600;
+  color: white;
 }
 </style>

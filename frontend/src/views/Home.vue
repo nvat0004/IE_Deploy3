@@ -1,20 +1,18 @@
 <template>
   <div class="home">
-    <!-- Hero Video Section -->
     <HeroVideo :dashboardRef="dashboardRef" :featuresRef="featuresRef" />
 
-    <!-- Dashboard -->
-    <section ref="dashboardRef" class="section fade-in">
-      <div class="section-head">
-        <h2 class="section-title">Beach Conditions Dashboard</h2>
-      </div>
-      <div class="grid panels">
+    <div class="main-content-wrapper">
+      <section ref="dashboardRef" class="dashboard-section">
+        <div class="dashboard-header">
+          <h2 class="dashboard-title">Beach Conditions Dashboard</h2>
+        </div>
+        <div class="grid panels">
 
-        <!-- UV Index -->
         <div class="panel">
           <Card class="panel-card">
             <template #header>
-              <div class="panel-head"><h5>☀️ UV Index</h5></div>
+              <div class="panel-head"><h5>UV Index</h5></div>
             </template>
             <template #content>
               <p class="panel-sub">UV index and sun safety information</p>
@@ -30,11 +28,10 @@
           </Card>
         </div>
 
-        <!-- Weather Conditions  -->
         <div class="panel">
           <Card class="panel-card">
             <template #header>
-              <div class="panel-head"><h5>🌤️ Weather Conditions</h5></div>
+              <div class="panel-head"><h5>Weather Conditions</h5></div>
             </template>
             <template #content>
               <p class="panel-sub">Current weather data</p>
@@ -55,11 +52,10 @@
           </Card>
         </div>
 
-        <!-- Swimming Safety -->
         <router-link to="/safety" class="panel">
           <Card class="panel-card">
             <template #header>
-              <div class="panel-head"><h5>🏊 Swimming Safety</h5></div>
+              <div class="panel-head"><h5>Swimming Safety</h5></div>
             </template>
             <template #content>
               <p class="panel-sub">Today's safety status</p>
@@ -70,11 +66,10 @@
           </Card>
         </router-link>
 
-        <!-- Prediction Model Results -->
         <router-link to="/predict" class="panel">
           <Card class="panel-card">
             <template #header>
-              <div class="panel-head"><h5>🔮 Prediction Model Results</h5></div>
+              <div class="panel-head"><h5>Prediction Model Results</h5></div>
             </template>
             <template #content>
               <p class="panel-sub">Water quality predictions</p>
@@ -85,78 +80,75 @@
           </Card>
         </router-link>
 
-      </div>
-    </section>
-
-    <!-- Trash Quiz -->
-    <section class="section fade-in">
-      <div class="grid one">
-        <router-link to="/recycle-quiz" class="panel">
-          <Card class="panel-card center">
-            <template #header>
-              <div class="panel-head"><h5>🗑️ Trash Quiz</h5></div>
-            </template>
-            <template #content>
-              <p class="panel-sub">Test your recycling knowledge</p>
-              <div class="panel-body">
-                <p class="muted">Play now & learn about Aussie bin rules!</p>
-              </div>
-            </template>
-          </Card>
-        </router-link>
-      </div>
-    </section>
-
-    <!-- What We Provide -->
-    <section ref="featuresRef" class="section fade-in">
-      <div class="section-head"><h3 class="section-subtitle">What We Provide</h3></div>
-      <div class="grid three">
-        <div v-for="(item, i) in features" :key="i" class="panel">
-          <Card class="panel-card h-100">
-            <template #content>
-              <div class="tile">
-                <h5>{{ item.icon }} {{ item.title }}</h5>
-                <p class="muted">{{ item.description }}</p>
-              </div>
-            </template>
-          </Card>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Who We Help -->
-    <section class="section fade-in">
-      <div class="section-head"><h3 class="section-subtitle">Who We Help</h3></div>
-      <div class="grid three">
-        <div v-for="(group, i) in audiences" :key="i" class="panel">
-          <Card class="panel-card h-100">
-            <template #content>
-              <div class="tile">
-                <h5>{{ group.icon }} {{ group.title }}</h5>
-                <p class="muted">{{ group.description }}</p>
-              </div>
-            </template>
-          </Card>
+      <section class="trash-quiz-section">
+        <div class="trash-quiz-header">
+          <h2 class="trash-quiz-title">Trash Quiz</h2>
         </div>
-      </div>
-    </section>
+        <div class="grid one">
+          <router-link to="/recycle-quiz" class="panel">
+            <Card class="panel-card">
+              <template #header>
+                <div class="panel-head"><h5>Trash Quiz</h5></div>
+              </template>
+              <template #content>
+                <p class="panel-sub">Test your recycling knowledge</p>
+                <div class="panel-body">
+                  <p class="muted">Play now & learn about Aussie bin rules!</p>
+                </div>
+              </template>
+            </Card>
+          </router-link>
+        </div>
+      </section>
 
-    <!-- Articles -->
-    <section class="section fade-in">
-      <div class="section-head"><h3 class="section-subtitle">Articles</h3></div>
-      <ArticleSlider :articles="articleLinks" />
-    </section>
+      <section ref="featuresRef" class="features-section">
+        <div class="features-header">
+          <h2 class="features-title">What We Provide</h2>
+          <p class="features-subtitle">Comprehensive beach safety information at your fingertips</p>
+        </div>
+        
+        <div class="features-grid">
+          <div v-for="(feature, index) in features" :key="index" class="feature-card">
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-description">{{ feature.description }}</p>
+          </div>
+        </div>
+      </section>
 
-    <!-- Footer -->
+      <section class="audiences-section">
+        <div class="audiences-header">
+          <h2 class="audiences-title">Who We Help</h2>
+          <p class="audiences-subtitle">Supporting different groups with beach safety information</p>
+        </div>
+        
+        <div class="audiences-grid">
+          <div v-for="(group, index) in audiences" :key="index" class="audience-card">
+            <h3 class="audience-title">{{ group.title }}</h3>
+            <p class="audience-description">{{ group.description }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="articles-section">
+        <div class="articles-header">
+          <h2 class="articles-title">Latest News</h2>
+          <p class="articles-subtitle">Stay updated with beach safety news and alerts</p>
+        </div>
+        <ArticleSlider :articles="articleLinks" />
+      </section>
+    </div>
+
     <footer class="footer">
-      <small>© 2025 AquaProtect - TA22 Team</small>
+      <small>© 2025 AquaProtect - TA22 Team </small>
       <small>Keeping families safe at Beaches</small>
     </footer>
   </div>
 
-  <!-- Back to top -->
   <Button 
-    class="back-to-top-fixed"
+    class="back-to-top-button"
     icon="pi pi-arrow-up" 
     severity="secondary"
     outlined
@@ -164,20 +156,31 @@
     size="large"
     @click="scrollToTop"
     aria-label="Scroll to top of page"
+    v-show="showBackToTop"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import ArticleSlider from '@/components/ArticleSlider.vue';
 import HeroVideo from '@/components/HeroVideo.vue';
 
+// ✅ ensure API key always resolves
 const OPEN_WEATHER_API_KEY = import.meta.env.VITE_OPEN_WEATHER_API_KEY || 'a7f7e34d892b94d341f19b3252f8c992';
-const DROMANA = { lat: -38.33, lon: 145.0 };
 
-// Refs for HeroVideo scroll targets
 const dashboardRef = ref<HTMLElement | null>(null);
 const featuresRef = ref<HTMLElement | null>(null);
+
+const beaches = [
+  { name: 'Carrum Beach', lat: -38.0652, lon: 145.1214 },
+  { name: 'St Kilda Beach', lat: -37.8675, lon: 144.9731 },
+  { name: 'Dromana Beach', lat: -38.3337, lon: 144.9658 },
+  { name: 'Port Melbourne Beach', lat: -37.8399, lon: 144.939 },
+  { name: 'Altona Beach', lat: -37.8686, lon: 144.8297 },
+];
+
+const selectedWeatherBeach = ref(beaches[0]);
+const selectedUvBeach = ref(beaches[0]);
 
 const weather = ref<any>(null);
 const uvIndex = ref<number | null>(null);
@@ -188,7 +191,7 @@ const uvError = ref<string | null>(null);
 
 const fetchWeather = async () => {
   try {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Dromana,AU&units=metric&appid=${OPEN_WEATHER_API_KEY}`);
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${selectedWeatherBeach.value.lat}&lon=${selectedWeatherBeach.value.lon}&units=metric&appid=${OPEN_WEATHER_API_KEY}`);
     if (!res.ok) throw new Error(`Weather ${res.status}`);
     const data = await res.json();
     weather.value = {
@@ -206,7 +209,7 @@ const fetchWeather = async () => {
 
 const fetchUv = async () => {
   try {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${DROMANA.lat}&lon=${DROMANA.lon}&appid=${OPEN_WEATHER_API_KEY}`);
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/uvi?lat=${selectedUvBeach.value.lat}&lon=${selectedUvBeach.value.lon}&appid=${OPEN_WEATHER_API_KEY}`);
     if (!res.ok) throw new Error(`UV ${res.status}`);
     const data = await res.json();
     uvIndex.value = typeof data.value === 'number' ? data.value : null;
@@ -241,78 +244,720 @@ const audiences = [
   { icon: '🌊', title: 'Water Safety Advocates', description: 'Health-conscious families promoting child-focused beach safety' }
 ];
 
+const showBackToTop = ref(false);
+
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+const handleScroll = () => {
+  showBackToTop.value = window.scrollY > 300;
+};
 
 onMounted(() => {
   fetchWeather();
   fetchUv();
+  window.addEventListener('scroll', handleScroll);
 });
+
+// Cleanup on unmount
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
+watch(selectedWeatherBeach, fetchWeather);
+watch(selectedUvBeach, fetchUv);
 </script>
 
 <style scoped>
+* {
+  box-sizing: border-box;
+}
+
 .home {
-  --bg: #EEF2F5;
-  --panel: #FFFFFF;
-  --ink: #111827;
-  --sub: #4B5563;
-  --muted: #6B7280;
-  --radius-xl: 24px;
-  --shadow: 0 8px 28px rgba(17,24,39,.08);
-  --shadow-lg: 0 12px 40px rgba(17,24,39,.1);
-  background: var(--bg);
-  color: var(--ink);
   min-height: 100vh;
+  background-image: url('@/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+  margin: 0;
   padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.home::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.2) 15%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.05) 60%,
+    rgba(0, 0, 0, 0.1) 70%,
+    rgba(0, 0, 0, 0.2) 85%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+
+
+/* Main Content Wrapper */
+.main-content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 248, 255, 0.95) 0%,
+    rgba(248, 250, 252, 0.98) 20%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+  padding: 3rem 2rem;
+  position: relative;
+  z-index: 2;
+  margin-top: 2rem;
+  transition: all 0.6s ease-in-out;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideInUp 0.8s ease-out 0.3s forwards;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.main-content-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 248, 255, 0) 0%,
+    rgba(240, 248, 255, 0.8) 100%
+  );
+  border-radius: 16px 16px 0 0;
+  z-index: -1;
+}
+
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dashboard Section */
+.dashboard-section {
+  padding: 0 0 2rem 0;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #1e40af, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+
+
+
+.grid { 
+  display: grid; 
+  gap: 2rem; 
+}
+
+.grid.panels { 
+  grid-template-columns: repeat(4, 1fr); 
+}
+
+.grid.four { 
+  grid-template-columns: repeat(4, 1fr); 
+}
+
+.grid.five { 
+  grid-template-columns: repeat(5, 1fr); 
+}
+
+.grid.three { 
+  grid-template-columns: repeat(3, 1fr); 
+}
+
+.grid.one { 
+  grid-template-columns: 1fr; 
+}
+
+.panel-card {
+  background: linear-gradient(135deg, rgba(240, 248, 255, 0.9), rgba(255, 255, 255, 0.95));
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  overflow: hidden;
 }
 
-.section { 
-  max-width: 1200px; 
-  width: 100%; 
-  margin: 0 auto; 
-  padding: 3rem 1.25rem;
+.panel-card.fancy-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.section:first-of-type { padding-top: 3rem; }
+.panel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+}
 
-.grid { display: grid; gap: 1rem; }
-.grid.panels { grid-template-columns: repeat(4, 1fr); }
-.grid.one { grid-template-columns: 1fr; }
-.grid.three { grid-template-columns: repeat(3, 1fr); }
+.panel-card.fancy-card.hoverable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
 
-.panel { text-decoration: none; }
-.panel-card { background: var(--panel); border-radius: var(--radius-xl); box-shadow: var(--shadow); border: 1px solid #edf2f7; display: block; height: 100%; transition: transform .22s ease, box-shadow .22s ease; }
-.panel-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-.panel-card.center { text-align: center; }
+.tall-box {
+  min-height: 220px;
+}
 
-.panel-head { padding: 1rem 1rem 0; }
-.panel-head h5 { margin: 0; font-weight: 800; }
-.panel-sub { margin: .25rem 1rem 0; color: var(--muted); font-size: .95rem; }
-.panel-body { padding: 1rem; min-height: 120px; display: grid; place-items: center; text-align: center; }
+.panel-head {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
 
-.loading { display: grid; place-items: center; gap: .5rem; }
-.kpi span { font-size: 2.75rem; font-weight: 900; }
-.weather { color: var(--sub); line-height: 1.6; }
-.muted { color: var(--muted); margin: 0; }
+.panel-head h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  text-align: center;
+}
 
-.footer { max-width: 1200px; width: 100%; margin: 0 auto; background: var(--panel); border: 1px solid #edf2f7; border-radius: var(--radius-xl); box-shadow: var(--shadow); padding: 1.25rem; text-align: center; color: var(--sub); display: grid; gap: .25rem; }
+.panel-sub {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  text-align: center;
+}
 
-.fade-in { animation: fadeIn .6s ease both; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.panel a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  height: 100%;
+}
 
-.back-to-top-fixed { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; box-shadow: var(--shadow); transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease; opacity: .95; }
-.back-to-top-fixed:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); opacity: 1; }
+.panel a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.panel a .panel-card {
+  height: 100%;
+}
+
+.panel a .panel-sub {
+  color: #64748b;
+  text-decoration: none;
+  margin: 0.5rem 0;
+}
+
+.panel a .muted {
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin: 0.25rem 0;
+}
+
+.panel-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.kpi {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.kpi span {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2563eb;
+  display: block;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.weather {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.weather p {
+  margin: 0.5rem 0;
+  text-align: center;
+}
+
+.weather strong {
+  color: #2563eb;
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: block;
+  line-height: 1;
+  margin: 0.5rem 0;
+}
+
+.weather .fw-bold {
+  color: #1e293b;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0.75rem 0;
+}
+
+.weather .d-flex {
+  margin: 1rem 0;
+  gap: 2rem;
+}
+
+.weather .d-flex p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.tile {
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tile h5 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+.tile p {
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 0.875rem;
+  flex-grow: 1;
+}
+
+/* Features Section */
+.features-section {
+  padding: 2rem 0;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.features-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.features-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #0891b2, #06b6d4, #67e8f9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.features-subtitle {
+  font-size: 1.25rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.feature-card {
+  background: linear-gradient(135deg, rgba(240, 248, 255, 0.8), rgba(255, 255, 255, 0.9));
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(8, 145, 178, 0.1);
+  border: 1px solid rgba(8, 145, 178, 0.2);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.2);
+  border-color: rgba(8, 145, 178, 0.3);
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.feature-description {
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+}
+
+/* Audiences Section */
+.audiences-section {
+  padding: 2rem 0;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.audiences-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.audiences-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #dc2626, #ef4444, #f87171);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.audiences-subtitle {
+  font-size: 1.25rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.audiences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.audience-card {
+  background: linear-gradient(135deg, rgba(254, 242, 242, 0.8), rgba(255, 255, 255, 0.9));
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.audience-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.audience-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.audience-description {
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+}
+
+/* Articles Section */
+.articles-section {
+  padding: 2rem 0 0 0;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.articles-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.articles-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #ea580c, #f97316, #fb923c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.articles-subtitle {
+  font-size: 1.25rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Trash Quiz Section */
+.trash-quiz-section {
+  padding: 2rem 0;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.trash-quiz-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.trash-quiz-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #059669, #10b981, #34d399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+}
+
+.muted {
+  color: #64748b;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.small {
+  font-size: 0.75rem;
+}
+
+.footer {
+  background: #1e293b;
+  color: white;
+  padding: 3rem 0 1rem;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.footer small {
+  display: block;
+  text-align: center;
+  color: #94a3b8;
+  margin: 0.25rem 0;
+}
+
+.footer small:first-child {
+  font-weight: 600;
+  color: white;
+}
+
+/* Back to top button */
+.back-to-top-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-top-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .grid.panels,
+  .grid.four { 
+    grid-template-columns: repeat(3, 1fr); 
+  }
+}
 
 @media (max-width: 1024px) {
-  .grid.panels { grid-template-columns: repeat(2, 1fr); }
-  .grid.three { grid-template-columns: repeat(2, 1fr); }
+  .grid.panels,
+  .grid.four { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+  .grid.five { 
+    grid-template-columns: repeat(3, 1fr); 
+  }
+  .grid.three { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
 }
+
 @media (max-width: 768px) {
-  .hero { grid-template-columns: 1fr; }
+  
+  
+  .grid.panels,
+  .grid.four,
+  .grid.five,
+  .grid.three { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .panel-card.fancy-card {
+    margin-bottom: 1rem;
+  }
+  
+  .weather .d-flex {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Features, Audiences, Articles responsive */
+  .features-section,
+  .audiences-section,
+  .articles-section {
+    padding: 3rem 0;
+  }
+  
+  .features-container,
+  .audiences-container,
+  .articles-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  /* Main content wrapper responsive */
+  .main-content-wrapper {
+    padding: 2rem 1.5rem;
+  }
+  
+  /* Dashboard and Trash Quiz responsive */
+  .dashboard-section,
+  .trash-quiz-section {
+    padding: 1.5rem 0;
+  }
+  
+  .features-title,
+  .audiences-title,
+  .articles-title,
+  .dashboard-title,
+  .trash-quiz-title {
+    font-size: 2rem;
+  }
+  
+  .features-subtitle,
+  .audiences-subtitle,
+  .articles-subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .features-grid,
+  .audiences-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .feature-card,
+  .audience-card {
+    padding: 1.5rem;
+  }
+  
+  .back-to-top-button {
+    bottom: 1rem;
+    right: 1rem;
+  }
 }
-@media (max-width: 520px) {
-  .grid.panels, .grid.three { grid-template-columns: 1fr; }
+
+@media (max-width: 390px) {
+  
+  .main-content-wrapper {
+    padding: 1.5rem 1rem;
+  }
+  
+  .features-title,
+  .audiences-title,
+  .articles-title,
+  .dashboard-title,
+  .trash-quiz-title {
+    font-size: 1.75rem;
+  }
+  
+  .feature-card,
+  .audience-card {
+    padding: 1.25rem;
+  }
+  
+  .back-to-top-button {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 }
 </style>

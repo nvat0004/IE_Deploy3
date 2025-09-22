@@ -1,7 +1,6 @@
 <template>
   <div class="quiz-container d-flex justify-content-center align-items-center">
     <div class="quiz-card">
-      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold">🛢️ Trash Bin Quiz</h2>
         <div>
@@ -12,36 +11,42 @@
         </div>
       </div>
 
-      <!-- Quiz Question -->
       <div v-if="!quizCompleted" class="text-center">
-        <h4>🗑️ Where does this go?</h4>
-        <img :src="currentQuestion.image" :alt="currentQuestion.name"
-             class="quiz-image mb-3 animate__animated animate__bounceIn" />
+        <h4 class="mb-3">🗑️ Drag the item to the correct bin!</h4>
+
+        <img
+          :src="currentQuestion.image"
+          :alt="currentQuestion.name"
+          class="quiz-image mb-3 animate__animated"
+          :class="{
+            'animate__bounce': animateCorrect,
+            'animate__wobble': animateWrong
+          }"
+          draggable="true"
+          @dragstart="onDragStart($event, currentQuestion.bin)"
+        />
         <h3 class="fw-bold">{{ currentQuestion.name }}</h3>
         <p class="text-muted">{{ progressText }}</p>
 
-        <!-- Progress bar -->
-        <div class="progress mb-3" style="height: 20px;">
+        <div class="progress mb-4" style="height: 20px;">
           <div class="progress-bar bg-success" role="progressbar"
                :style="{ width: progressPercent + '%' }">
           </div>
         </div>
 
-        <!-- Answer Buttons -->
-        <div class="d-flex justify-content-center gap-3 my-3 flex-wrap">
-          <button
-            v-for="bin in bins"
-            :key="bin.name"
-            :class="['btn', 'bin-btn', bin.class]"
-            @click="checkAnswer(bin.label)"
-            :disabled="answered"
-          >
-            {{ bin.emoji }} {{ bin.label }}
-          </button>
+        <div class="d-flex justify-content-around mt-4 bins-area">
+          <div class="bin" @dragover.prevent @drop="onDrop('Red Bin')">
+            <img src="/bins/red-bin.png" class="bin-img" />
+            <p class="fw-bold">Red Bin</p>
+          </div>
+
+          <div class="bin" @dragover.prevent @drop="onDrop('Green Bin')">
+            <img src="/bins/green-bin.png" class="bin-img" />
+            <p class="fw-bold">Green Bin</p>
+          </div>
         </div>
 
-        <!-- Feedback -->
-        <div v-if="answered">
+        <div v-if="answered" class="mt-3">
           <p :class="isCorrect ? 'text-success' : 'text-danger'" class="fw-bold fs-5">
             {{ isCorrect ? '✅ Correct!' : '❌ Oops! Wrong Bin!' }}
           </p>
@@ -50,10 +55,11 @@
         </div>
       </div>
 
-      <!-- Quiz Completed -->
       <div v-else class="text-center animate__animated animate__tada">
         <h3 class="text-success">🎉 Quiz Completed!</h3>
         <p class="fw-bold">You scored {{ score }} out of {{ questions.length }}</p>
+
+        <audio ref="happyAudio" src="/sounds/happy.mp3"></audio>
 
         <h5 class="mt-4">Leaderboard 🏆</h5>
         <ul class="list-group leaderboard">
@@ -63,6 +69,11 @@
         </ul>
       </div>
     </div>
+    
+    <footer class="footer">
+      <small>© 2025 AquaProtect - TA22 Team </small>
+      <small>Keeping families safe at Beaches</small>
+    </footer>
   </div>
 </template>
 
@@ -72,21 +83,14 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import 'animate.css';
 import confetti from 'canvas-confetti';
 
-// Bins
-const bins = [
-  { label: 'Red Bin', class: 'btn-danger', emoji: '🟥' },
-  { label: 'Yellow Bin', class: 'btn-warning', emoji: '🟨' },
-  { label: 'Green Bin', class: 'btn-success', emoji: '🟩' }
-];
-
-// Questions with your images
+// Questions (6 items, 2 bins only)
 const questions = ref([
-  { name: 'Chip Packets', bin: 'Red Bin', image: '/quiz/ChipPackets.png', fact: 'Chip packets cannot be recycled – red bin.' },
-  { name: 'Clothing', bin: 'Red Bin', image: '/quiz/Clothing.png', fact: 'Clothes should go to charity, but in bins → red bin.' },
-  { name: 'Dirty Food Containers', bin: 'Red Bin', image: '/quiz/FoodContainers.png', fact: 'Dirty containers can’t be recycled – red bin.' },
-  { name: 'Leftover Food', bin: 'Green Bin', image: '/quiz/LeftoverFood.png', fact: 'Food scraps are compostable → green bin.' },
-  { name: 'Styrofoam', bin: 'Red Bin', image: '/quiz/Styrofoam.png', fact: 'Styrofoam cannot be recycled – red bin.' },
-  { name: 'Tin Cans', bin: 'Yellow Bin', image: '/quiz/TinCans.png', fact: 'Tin cans are 100% recyclable → yellow bin.' }
+  { name: 'Chip Packets', bin: 'Red Bin', image: '/quiz/ChipPackets.png', fact: 'Chip packets cannot be recycled – they go in the red bin.' },
+  { name: 'Clothing', bin: 'Red Bin', image: '/quiz/Clothing.png', fact: 'Clothing doesn’t belong in recycling. Donate if possible, otherwise red bin.' },
+  { name: 'Dirty Food Containers', bin: 'Red Bin', image: '/quiz/FoodContainers.png', fact: 'Food containers that are dirty can’t be recycled – red bin.' },
+  { name: 'Leftover Food', bin: 'Green Bin', image: '/quiz/LeftoverFood.png', fact: 'Food scraps and leftovers are compostable – green bin.' },
+  { name: 'Styrofoam', bin: 'Red Bin', image: '/quiz/Styrofoam.png', fact: 'Styrofoam cannot be recycled – it belongs in the red bin.' },
+  { name: 'Tin Cans', bin: 'Green Bin', image: '/quiz/TinCans.png', fact: 'Clean tin cans can be recycled – green bin.' },
 ]);
 
 // State
@@ -96,11 +100,14 @@ const answered = ref(false);
 const isCorrect = ref(false);
 const quizCompleted = ref(false);
 const isMuted = ref(false);
+const animateCorrect = ref(false);
+const animateWrong = ref(false);
 
-// Local sounds
+// Sounds
 const correctSound = new Audio('/sounds/correct.mp3');
 const wrongSound = new Audio('/sounds/wrong.mp3');
 const bgMusic = new Audio('/sounds/bg.mp3');
+const happySound = new Audio('/sounds/happy.mp3');
 bgMusic.loop = true;
 
 const currentQuestion = computed(() => questions.value[currentIndex.value]);
@@ -108,15 +115,27 @@ const progressText = computed(() => `Question ${currentIndex.value + 1} of ${que
 const progressPercent = computed(() => ((currentIndex.value + 1) / questions.value.length) * 100);
 const leaderboard = ref([]);
 
-// Answer check
-function checkAnswer(bin) {
+// Drag logic
+function onDragStart(event, correctBin) {
+  event.dataTransfer.setData("bin", correctBin);
+}
+
+function onDrop(bin) {
+  if (answered.value) return;
+
+  const correctBin = currentQuestion.value.bin;
   answered.value = true;
-  isCorrect.value = bin === currentQuestion.value.bin;
+  isCorrect.value = bin === correctBin;
+
   if (isCorrect.value) {
     score.value++;
+    animateCorrect.value = true;
     if (!isMuted.value) correctSound.play();
+    setTimeout(() => (animateCorrect.value = false), 1000);
   } else {
+    animateWrong.value = true;
     if (!isMuted.value) wrongSound.play();
+    setTimeout(() => (animateWrong.value = false), 1000);
   }
 }
 
@@ -134,12 +153,14 @@ function nextQuestion() {
 function completeQuiz() {
   quizCompleted.value = true;
 
-  // 🎉 Fire confetti
+  // 🎉 Confetti
   confetti({
     particleCount: 200,
     spread: 100,
     origin: { y: 0.6 }
   });
+
+  if (!isMuted.value) happySound.play();
 
   const name = prompt('Enter your name for the leaderboard:') || 'Player';
   const entry = { name, score: score.value };
@@ -152,7 +173,7 @@ function completeQuiz() {
 
 // Restart
 function restartQuiz() {
-  questions.value = shuffleArray(questions.value);
+  shuffleArray(questions.value);
   currentIndex.value = 0;
   score.value = 0;
   answered.value = false;
@@ -177,9 +198,9 @@ function shuffleArray(array) {
 
 // Init
 onMounted(() => {
-  questions.value = shuffleArray(questions.value);
+  shuffleArray(questions.value);
   leaderboard.value = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-  // Start music after first click (browser policy)
+  // Start bg music on first click
   document.body.addEventListener('click', () => {
     if (!isMuted.value && bgMusic.paused) bgMusic.play();
   }, { once: true });
@@ -194,13 +215,12 @@ onMounted(() => {
   padding: 20px;
 }
 
-/* Highlighted quiz card */
 .quiz-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
   padding: 30px;
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
 }
 
@@ -208,20 +228,51 @@ onMounted(() => {
   width: 160px;
   height: 160px;
   object-fit: contain;
-  margin-bottom: 10px;
+  cursor: grab;
 }
 
-.bin-btn {
-  min-width: 140px;
-  font-size: 20px;
-  padding: 12px 18px;
-  border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+.bins-area {
+  gap: 40px;
+}
+
+.bin {
+  text-align: center;
+}
+
+.bin-img {
+  width: 150px;
+  height: 200px;
+  object-fit: contain;
+  cursor: pointer;
 }
 
 .leaderboard {
   max-width: 320px;
   margin: 0 auto;
   text-align: left;
+}
+
+/* Footer */
+.footer {
+  background: #1e293b;
+  color: white;
+  padding: 3rem 0 1rem;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.footer small {
+  display: block;
+  text-align: center;
+  color: #94a3b8;
+  margin: 0.25rem 0;
+}
+
+.footer small:first-child {
+  font-weight: 600;
+  color: white;
 }
 </style>

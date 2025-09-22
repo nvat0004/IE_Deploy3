@@ -24,6 +24,24 @@
           aria-label="Navigate to Home page"
         />
         <Button 
+          label="Safety" 
+          icon="pi pi-shield" 
+          severity="secondary" 
+          outlined 
+          size="small"
+          @click="$router.push('/safety')"
+          aria-label="Navigate to Safety page"
+        />
+        <Button 
+          label="Predict" 
+          icon="pi pi-chart-line" 
+          severity="secondary" 
+          outlined 
+          size="small"
+          @click="$router.push('/predict')"
+          aria-label="Navigate to Predict page"
+        />
+        <Button 
           label="Education" 
           icon="pi pi-book" 
           severity="secondary" 
