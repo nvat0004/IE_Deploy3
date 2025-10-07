@@ -33,15 +33,6 @@
           aria-label="Navigate to Safety page"
         />
         <Button 
-          label="Predict" 
-          icon="pi pi-chart-line" 
-          severity="secondary" 
-          outlined 
-          size="small"
-          @click="$router.push('/predict')"
-          aria-label="Navigate to Predict page"
-        />
-        <Button 
           label="Education" 
           icon="pi pi-book" 
           severity="secondary" 

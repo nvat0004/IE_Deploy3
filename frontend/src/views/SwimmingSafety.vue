@@ -46,15 +46,7 @@
       </select>
     </div>
 
-    <div class="text-center mb-3">
-      <button
-        class="btn btn-primary"
-        @click="goToPrediction"
-        :disabled="!selectedBeach"
-      >
-        View 7-Day Prediction for {{ selectedBeach }}
-      </button>
-    </div>
+    
 
     <div
       v-if="status"
@@ -96,6 +88,43 @@
         <div><span class="legend-dot bg-danger"></span> Dangerous</div>
       </div>
     </div>
+      </section>  
+
+      <!-- Prediction Section placed below safety content -->
+      <section class="prediction-section mt-5">
+        <h2 class="mb-4 text-center">7-Day Swimming Safety Prediction</h2>
+
+        <div class="mb-3 text-center">
+          <span class="badge bg-success me-2">Safe</span>
+          <span class="badge bg-warning text-dark me-2">Moderate</span>
+          <span class="badge bg-danger">Dangerous</span>
+        </div>
+
+        <div v-if="predictionsLoading" class="text-center text-muted mb-3">Loading…</div>
+        <div v-else-if="predictionsError" class="text-center text-danger mb-3">{{ predictionsError }}</div>
+
+        <div v-else class="row row-cols-1 row-cols-md-3 g-4">
+          <div class="col" v-for="(prediction, index) in predictions" :key="index">
+            <div
+              class="card h-100 shadow text-center text-white"
+              :class="{
+                'bg-success': prediction.status === 'Safe',
+                'bg-warning text-dark': prediction.status === 'Moderate',
+                'bg-danger': prediction.status === 'Dangerous'
+              }"
+            >
+              <div class="card-body">
+                <h5 class="card-title">{{ formatDate(prediction.date) }}</h5>
+                <p class="fw-bold fs-4">{{ prediction.status }}</p>
+                <p>{{ prediction.reason }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="!predictionsLoading && predictions.length === 0" class="text-center mt-4 text-muted">
+          No predictions available. Please try another beach.
+        </div>
       </section>
     </div>
     
@@ -108,12 +137,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
-import { useRouter } from "vue-router";
 import axios from "axios";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-const router = useRouter();
 
 const selectedBeach = ref("Carrum Beach");
 const status = ref("");
@@ -124,6 +150,11 @@ const selectedStatus = ref("");
 const map = ref<any>(null);
 const markers = ref<any[]>([]);
 const allBeachStatuses = ref<any[]>([]);
+
+// Predictions state 
+const predictions = ref<any[]>([]);
+const predictionsLoading = ref(false);
+const predictionsError = ref<string | null>(null);
 
 const beachOptions = [
   { name: "Carrum Beach", lat: -38.0652, lng: 145.1214 },
@@ -139,11 +170,9 @@ const formattedDate = computed(() => {
   return new Date(date.value).toLocaleDateString(undefined, options);
 });
 
-// Redirect to Prediction
-const goToPrediction = () => {
-  if (selectedBeach.value) {
-    router.push({ path: "/predict", query: { beach: selectedBeach.value } });
-  }
+const formatDate = (isoDate: string): string => {
+  const options: Intl.DateTimeFormatOptions = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
+  return new Date(isoDate).toLocaleDateString(undefined, options);
 };
 
 // Fetch all beaches and sync map + card
@@ -210,12 +239,30 @@ const initMap = () => {
   }).addTo(map.value);
 };
 
+const fetchPredictions = async () => {
+  try {
+    predictionsLoading.value = true;
+    predictionsError.value = null;
+    const response = await axios.get(`/api/predict?beach=${encodeURIComponent(selectedBeach.value)}`);
+    predictions.value = response.data;
+  } catch (e: any) {
+    predictions.value = [];
+    predictionsError.value = e?.message ?? 'Failed to load predictions';
+  } finally {
+    predictionsLoading.value = false;
+  }
+};
+
 onMounted(() => {
   initMap();
   fetchAllSafety();
+  fetchPredictions();
 });
 
-watch(selectedBeach, updateSelectedBeach);
+watch(selectedBeach, () => {
+  updateSelectedBeach();
+  fetchPredictions();
+});
 </script>
 
 <style scoped>
@@ -310,6 +357,47 @@ watch(selectedBeach, updateSelectedBeach);
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Prediction Section  */
+.prediction-section h2 {
+  background: linear-gradient(135deg, #1e40af, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.prediction-section .card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.prediction-section .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(255, 255, 255, 1);
+}
+
+.prediction-section .card.bg-success {
+  background: rgba(21, 128, 61, 0.8) !important;
+  color: white !important;
+  border-color: rgba(21, 128, 61, 0.7) !important;
+}
+
+.prediction-section .card.bg-warning {
+  background: rgba(245, 158, 11, 0.9) !important;
+  color: white !important;
+  border-color: rgba(245, 158, 11, 0.8) !important;
+}
+
+.prediction-section .card.bg-danger {
+  background: rgba(239, 68, 68, 0.9) !important;
+  color: white !important;
+  border-color: rgba(239, 68, 68, 0.8) !important;
 }
 
 /* Update title */

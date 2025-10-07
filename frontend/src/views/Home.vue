@@ -65,21 +65,6 @@
             </template>
           </Card>
         </router-link>
-
-        <router-link to="/predict" class="panel">
-          <Card class="panel-card">
-            <template #header>
-              <div class="panel-head"><h5>Prediction Model Results</h5></div>
-            </template>
-            <template #content>
-              <p class="panel-sub">Water quality predictions</p>
-              <div class="panel-body">
-                <p class="muted">Click here to view forecasts</p>
-              </div>
-            </template>
-          </Card>
-        </router-link>
-
         </div>
       </section>
 
