@@ -327,6 +327,8 @@ watch(selectedBeach, () => {
 .page-wrapper {
   position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   box-sizing: border-box;
 }
@@ -434,6 +436,7 @@ h2 {
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
+  margin-top: auto;
 }
 
 .footer small {

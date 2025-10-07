@@ -6,18 +6,30 @@ import Education from './views/Education.vue'
 import SwimmingSafety from './views/SwimmingSafety.vue'
 import SevenDaysPrediction from './views/SevenDaysPrediction.vue'
 import RecycleQuiz from './views/RecycleQuiz.vue'
+import Auth from './views/Auth.vue'
 
 const routes = [
-  { path: '/', name: 'Home', component: Home },
-  { path: '/education', name: 'Education', component: Education },
-  { path: '/safety', name: 'SwimmingSafety', component: SwimmingSafety },
-  { path: '/predict', name: 'SevenDaysPrediction', component: SevenDaysPrediction },
-  { path: '/recycle-quiz', name: 'RecyleQuiz', component: RecycleQuiz }
+  { path: '/auth', name: 'Auth', component: Auth },
+  { path: '/', name: 'Home', component: Home, meta: { requiresAuth: true } },
+  { path: '/education', name: 'Education', component: Education, meta: { requiresAuth: true } },
+  { path: '/safety', name: 'SwimmingSafety', component: SwimmingSafety, meta: { requiresAuth: true } },
+  { path: '/predict', name: 'SevenDaysPrediction', component: SevenDaysPrediction, meta: { requiresAuth: true } },
+  { path: '/recycle-quiz', name: 'RecyleQuiz', component: RecycleQuiz, meta: { requiresAuth: true } }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// Simple auth guard
+router.beforeEach((to, from, next) => {
+  const isAuthed = localStorage.getItem('siteAuthed') === 'true'
+  if (to.name === 'Auth') return next()
+  if (to.matched.some(r => r.meta?.requiresAuth)) {
+    if (!isAuthed) return next({ name: 'Auth', query: { redirect: to.fullPath } })
+  }
+  next()
 })
 
 export default router

@@ -259,6 +259,8 @@ watch(selectedUvBeach, fetchUv);
 
 .home {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-image: url('@/assets/background.jpg');
   background-size: cover;
   background-position: center;
@@ -795,6 +797,7 @@ watch(selectedUvBeach, fetchUv);
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
+  margin-top: auto;
 }
 
 .footer small {
