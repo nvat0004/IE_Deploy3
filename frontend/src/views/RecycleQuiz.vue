@@ -213,6 +213,8 @@ onMounted(() => {
   background-size: cover;
   min-height: 100vh;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .quiz-card {
@@ -262,6 +264,7 @@ onMounted(() => {
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
+  margin-top: auto;
 }
 
 .footer small {
