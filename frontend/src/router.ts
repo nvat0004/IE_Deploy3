@@ -9,8 +9,7 @@ import SevenDaysPrediction from './views/SevenDaysPrediction.vue'
 import RecycleQuiz from './views/RecycleQuiz.vue'
 import ChildHub from './views/ChildHub.vue'
 import Auth from './views/Auth.vue'
-import BeachFacilities from './views/BeachFacilities.vue'
-import BeachHazard from './views/BeachHazard.vue'
+import BeachInfo from './views/BeachInfo.vue'
 
 const routes = [
   { path: '/auth', name: 'Auth', component: Auth },
@@ -20,8 +19,7 @@ const routes = [
   { path: '/predict', name: 'SevenDaysPrediction', component: SevenDaysPrediction, meta: { requiresAuth: true } },
   { path: '/recycle-quiz', name: 'RecyleQuiz', component: RecycleQuiz, meta: { requiresAuth: true } },
   { path: '/childhub', name: 'ChildHub', component: ChildHub, meta: { requiresAuth: true } },
-  { path: '/facilities', name: 'BeachFacilities', component: BeachFacilities, meta: { requiresAuth: true } },
-  { path: '/hazard', name: 'BeachHazard', component: BeachHazard, meta: { requiresAuth: true } }
+  { path: '/beach-info', name: 'BeachInfo', component: BeachInfo, meta: { requiresAuth: true } }
 ]
 
 const router = createRouter({
