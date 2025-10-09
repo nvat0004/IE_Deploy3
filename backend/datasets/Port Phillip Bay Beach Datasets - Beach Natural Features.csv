@@ -1,0 +1,6 @@
+site_name_id,site_name,mean_wave_period,number_of_rips,dominant_swell_direction,spring_tide_max,beach_type,modal_wave,lowest_tidal_range,shore_platform,mean_sand_bars,swash_gradient,has_rocks,has_reefs,has_structures,has_headlands,has_outfalls,has_sharks,has_bluebottles,has_stingers,physical_risk_rating,overall_safety_hazard_rating
+99550,Dromana Beach,5,0,Northwest,1.2,Reflective,0.5,0.6,F,2,6,No,No,Yes,No,No,Yes,No,No,2,2
+99995,Carrum Beach,5,12,West,0.8,LTT - TBR,0.6,0.2,F,3,4,Yes,Yes,Yes,No,No,Yes,No,No,4,3
+99660,St Kilda Beach,5,7,Southwest,0.8,LTT - TBR,0.4,0.2,F,1,5,No,No,Yes,No,No,Yes,No,No,4,3
+99020,Port Melbourne Beach ,5,0,Southwest,0.8,LTT - TBR,0.3,0.2,F,1,5,No,No,Yes,No,No,Yes,No,No,3,2
+99710,Altona Beach,5,0,Southwest,0.8,Reflective,0.1,0.2,F,0,10,No,No,Yes,No,No,Yes,No,No,2,1
