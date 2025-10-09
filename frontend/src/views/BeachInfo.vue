@@ -8,7 +8,19 @@
         <div class="col-md-6">
           <label for="beachSelect" class="form-label fw-bold text-white">Select a Beach</label>
           <select v-model="selectedBeach" class="form-select" id="beachSelect">
-            <option v-for="beach in Object.keys(beachData)" :key="beach">{{ beach }}</option>
+            <option v-for="beach in filteredBeaches" :key="beach">{{ beach }}</option>
+          </select>
+        </div>
+        <!-- Safety Rating Filter -->
+        <div class="col-md-6">
+          <label for="ratingFilter" class="form-label fw-bold text-white">Filter by Safety Rating</label>
+          <select v-model="ratingFilter" class="form-select" id="ratingFilter">
+            <option value="">All</option>
+            <option value="1">🛡️ Very Low (1)</option>
+            <option value="2">✅ Low (2)</option>
+            <option value="3">⚠️ Moderate (3)</option>
+            <option value="4">High (4)</option>
+            <option value="5">Very High (5)</option>
           </select>
         </div>
       </div>
@@ -155,11 +167,19 @@ const facilityList = {
 }
 
 const selectedBeach = ref('Dromana Beach')
+const ratingFilter = ref('')
 const map = ref(null)
 const markers = ref({})
 
 // Computed properties
 const currentBeachData = computed(() => beachData[selectedBeach.value])
+
+const filteredBeaches = computed(() => {
+  if (!ratingFilter.value) return Object.keys(beachData)
+  return Object.keys(beachData).filter(
+    (beach) => beachData[beach].rating.toString() === ratingFilter.value
+  )
+})
 
 const badgeClass = computed(() => {
   const r = currentBeachData.value.rating
