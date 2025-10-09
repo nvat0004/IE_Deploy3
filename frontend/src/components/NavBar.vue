@@ -41,6 +41,24 @@
           @click="$router.push('/childhub')"
           aria-label="Navigate to ChildHub page"
         />
+        <Button 
+          label="Facilities" 
+          icon="pi pi-building" 
+          severity="secondary" 
+          outlined 
+          size="small"
+          @click="$router.push('/facilities')"
+          aria-label="Navigate to Beach Facilities page"
+        />
+        <Button 
+          label="Hazard" 
+          icon="pi pi-exclamation-triangle" 
+          severity="secondary" 
+          outlined 
+          size="small"
+          @click="$router.push('/hazard')"
+          aria-label="Navigate to Beach Hazard page"
+        />
       </div>
     </div>
   </nav>
