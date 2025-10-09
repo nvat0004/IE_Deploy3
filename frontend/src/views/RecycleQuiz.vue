@@ -77,10 +77,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import 'animate.css';
+// @ts-ignore
 import confetti from 'canvas-confetti';
 
 // Questions (6 items, 2 bins only)
@@ -113,14 +114,14 @@ bgMusic.loop = true;
 const currentQuestion = computed(() => questions.value[currentIndex.value]);
 const progressText = computed(() => `Question ${currentIndex.value + 1} of ${questions.value.length}`);
 const progressPercent = computed(() => ((currentIndex.value + 1) / questions.value.length) * 100);
-const leaderboard = ref([]);
+const leaderboard = ref<any[]>([]);
 
 // Drag logic
-function onDragStart(event, correctBin) {
-  event.dataTransfer.setData("bin", correctBin);
+function onDragStart(event: DragEvent, correctBin: string) {
+  event.dataTransfer?.setData("bin", correctBin);
 }
 
-function onDrop(bin) {
+function onDrop(bin: string) {
   if (answered.value) return;
 
   const correctBin = currentQuestion.value.bin;
@@ -166,7 +167,7 @@ function completeQuiz() {
   const entry = { name, score: score.value };
   const existing = JSON.parse(localStorage.getItem('leaderboard') || '[]');
   existing.push(entry);
-  existing.sort((a, b) => b.score - a.score);
+  existing.sort((a: any, b: any) => b.score - a.score);
   leaderboard.value = existing.slice(0, 5);
   localStorage.setItem('leaderboard', JSON.stringify(leaderboard.value));
 }
@@ -192,7 +193,7 @@ function toggleMute() {
 }
 
 // Shuffle helper
-function shuffleArray(array) {
+function shuffleArray(array: any[]) {
   return array.sort(() => Math.random() - 0.5);
 }
 

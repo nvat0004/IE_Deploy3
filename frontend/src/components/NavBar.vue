@@ -33,13 +33,13 @@
           aria-label="Navigate to Safety page"
         />
         <Button 
-          label="Education" 
-          icon="pi pi-book" 
+          label="ChildHub" 
+          icon="pi pi-users" 
           severity="secondary" 
           outlined 
           size="small"
-          @click="$router.push('/education')"
-          aria-label="Navigate to Education page"
+          @click="$router.push('/childhub')"
+          aria-label="Navigate to ChildHub page"
         />
       </div>
     </div>

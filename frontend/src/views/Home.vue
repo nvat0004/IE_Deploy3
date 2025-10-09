@@ -68,26 +68,6 @@
         </div>
       </section>
 
-      <section class="trash-quiz-section">
-        <div class="trash-quiz-header">
-          <h2 class="trash-quiz-title">Trash Quiz</h2>
-        </div>
-        <div class="grid one">
-          <router-link to="/recycle-quiz" class="panel">
-            <Card class="panel-card">
-              <template #header>
-                <div class="panel-head"><h5>Trash Quiz</h5></div>
-              </template>
-              <template #content>
-                <p class="panel-sub">Test your recycling knowledge</p>
-                <div class="panel-body">
-                  <p class="muted">Play now & learn about Aussie bin rules!</p>
-                </div>
-              </template>
-            </Card>
-          </router-link>
-        </div>
-      </section>
 
       <section ref="featuresRef" class="features-section">
         <div class="features-header">
@@ -744,31 +724,6 @@ watch(selectedUvBeach, fetchUv);
   margin: 0;
 }
 
-/* Trash Quiz Section */
-.trash-quiz-section {
-  padding: 2rem 0;
-  background: transparent;
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.trash-quiz-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.trash-quiz-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 1rem 0;
-  background: linear-gradient(135deg, #059669, #10b981, #34d399);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
 .loading {
   display: flex;
@@ -885,17 +840,15 @@ watch(selectedUvBeach, fetchUv);
     padding: 2rem 1.5rem;
   }
   
-  /* Dashboard and Trash Quiz responsive */
-  .dashboard-section,
-  .trash-quiz-section {
+  /* Dashboard responsive */
+  .dashboard-section {
     padding: 1.5rem 0;
   }
   
   .features-title,
   .audiences-title,
   .articles-title,
-  .dashboard-title,
-  .trash-quiz-title {
+  .dashboard-title {
     font-size: 2rem;
   }
   
@@ -931,8 +884,7 @@ watch(selectedUvBeach, fetchUv);
   .features-title,
   .audiences-title,
   .articles-title,
-  .dashboard-title,
-  .trash-quiz-title {
+  .dashboard-title {
     font-size: 1.75rem;
   }
   
