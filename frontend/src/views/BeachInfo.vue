@@ -1,32 +1,33 @@
 <template>
   <div class="container-fluid py-4 beach-info-page">
     <div class="container">
-      <h2 class="mb-4 text-white">🌊 {{ selectedBeach }}</h2>
+      <h2 class="mb-4 text-white">{{ selectedBeach }}</h2>
 
-      <!-- Beach selector + current risk level -->
-      <div class="row mb-4 align-items-end">
-        <div class="col-md-6">
+      <!-- Beach selector (left) + facilities legend (center) + risk level (right) -->
+      <div class="row mb-4 align-items-end gx-3">
+        <div class="col-md-4">
           <label for="beachSelect" class="form-label fw-bold text-white">Select a Beach</label>
           <select v-model="selectedBeach" class="form-select" id="beachSelect">
             <option v-for="beach in Object.keys(beachData)" :key="beach">{{ beach }}</option>
           </select>
         </div>
-        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <div class="col-md-4 mt-3 mt-md-0 text-md-center">
+          <div class="legend d-inline-block p-2 rounded shadow-sm bg-white text-start">
+            <div class="fw-semibold small mb-1">Legend (for facilities below)</div>
+            <div class="small"><span class="badge bg-success">Green</span> = Available</div>
+            <div class="small"><span class="badge bg-danger">Red</span> = Not Available</div>
+            <div class="small"><span class="badge bg-secondary">Number</span> = Count / Risk Rating</div>
+          </div>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
           <div class="fw-bold text-white mb-1">Risk level</div>
-          <span class="badge fs-6" :class="badgeClass">{{ currentBeachData.rating }}/5</span>
+          <span class="badge risk-badge" :class="badgeClass">{{ currentBeachData.rating }}/5</span>
         </div>
       </div>
 
-      <!-- Map with Legend -->
+      <!-- Map  -->
       <div class="position-relative mb-4">
         <div id="map" style="height: 400px" class="rounded shadow"></div>
-        <!-- Legend positioned at top-right of map -->
-        <div class="legend border p-2 rounded shadow-sm bg-white position-absolute" style="top: 10px; right: 10px; z-index: 1000;">
-          <strong>Legend:</strong>
-          <div><span class="badge bg-success">Green</span> = Available</div>
-          <div><span class="badge bg-danger">Red</span> = Not Available</div>
-          <div><span class="badge bg-secondary">Number</span> = Count / Risk Rating</div>
-        </div>
       </div>
 
       <!-- Key Hazard Factors Card -->
@@ -150,7 +151,7 @@ const facilityList = {
   shop: { label: 'Shops' },
   toilet: { label: 'Toilet' },
   parking: { label: 'Car Park' },
-  barbique: { label: 'Barbique' },
+  barbique: { label: 'Barbecue' },
   picnic: { label: 'Picnic' },
   shades: { label: 'Shades' },
   shelter: { label: 'Shelter' },
@@ -245,11 +246,21 @@ watch(selectedBeach, (beach) => {
   min-width: 200px;
 }
 
+.risk-badge { /* enlarged risk display */
+  font-size: 1.1rem;
+  padding: 0.4rem 0.6rem;
+}
+
 #map {
   border: 2px solid #dee2e6;
 }
 
 .card-body p {
   margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .risk-badge { font-size: 1rem; }
+  .legend { display: inline-block; margin-top: 0.5rem; }
 }
 </style>

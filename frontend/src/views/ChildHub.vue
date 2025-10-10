@@ -10,26 +10,12 @@
         </div>
 
         <div class="activities-grid">
-          <!-- Trash Quiz Card -->
-          <div class="activity-card trash-quiz-card">
-            <h3 class="card-title">Trash Quiz</h3>
-            <p class="card-description">Learn which bin to use for different items. Drag and drop to play!</p>
-            <div class="card-features">
-              <span class="feature-tag">Interactive</span>
-              <span class="feature-tag">Leaderboard</span>
-              <span class="feature-tag">Sound Effects</span>
-            </div>
-            <router-link to="/recycle-quiz" class="activity-button trash-button">
-              Play Quiz
-            </router-link>
-          </div>
-
           <!-- Education Card -->
           <div class="activity-card education-card">
             <h3 class="card-title">Water Education</h3>
             <p class="card-description">Discover bacteria, diseases, and minerals in water. Learn to stay safe!</p>
             <div class="card-features">
-              <span class="feature-tag">Science</span>
+              <span class="feature-tag">Diseases</span>
               <span class="feature-tag">Bacteria</span>
               <span class="feature-tag">Minerals</span>
             </div>
@@ -50,6 +36,20 @@
             <button class="activity-button sanitation-button" disabled>
               Coming Soon
             </button>
+          </div>
+          
+          <!-- Trash Quiz Card -->
+          <div class="activity-card trash-quiz-card">
+            <h3 class="card-title">Trash Quiz</h3>
+            <p class="card-description">Learn which bin to use for different items. Drag and drop to play!</p>
+            <div class="card-features">
+              <span class="feature-tag">Interactive</span>
+              <span class="feature-tag">Leaderboard</span>
+              <span class="feature-tag">Sound Effects</span>
+            </div>
+            <router-link to="/recycle-quiz" class="activity-button trash-button">
+              Play Quiz
+            </router-link>
           </div>
         </div>
 
@@ -168,7 +168,7 @@
 .childhub-title {
   font-size: 3rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #22c55e, #16a34a, #15803d);
+  background: linear-gradient(135deg, #0369a1, #0ea5e9, #67e8f9);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -178,7 +178,7 @@
 
 .childhub-subtitle {
   font-size: 1.25rem;
-  color: #64748b;
+  color: #0e7490; /* ocean blue for subtitle */
   margin: 0;
   font-weight: 500;
 }
@@ -224,13 +224,13 @@
 .card-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #0c4a6e; /* deep ocean blue */
   margin: 0 0 1rem 0;
 }
 
 /* Card Descriptions */
 .card-description {
-  color: #64748b;
+  color: #0e7490; /* ocean blue text */
   line-height: 1.6;
   margin: 0 0 1.5rem 0;
   font-size: 1rem;
@@ -246,13 +246,13 @@
 }
 
 .feature-tag {
-  background: rgba(34, 197, 94, 0.1);
-  color: #15803d;
+  background: rgba(14, 165, 233, 0.12); /* sky-500 */
+  color: #0c4a6e;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.875rem;
   font-weight: 500;
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(14, 165, 233, 0.25);
 }
 
 /* Activity Buttons */
@@ -316,17 +316,17 @@
 
 /* Fun Facts Section */
 .fun-facts-section {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(16, 185, 129, 0.1));
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.06), rgba(59, 130, 246, 0.1));
   border-radius: 16px;
   padding: 2rem;
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(14, 165, 233, 0.25);
 }
 
 .facts-title {
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  color: #15803d;
+  color: #0c4a6e; /* deep ocean blue */
   margin: 0 0 2rem 0;
 }
 
@@ -351,7 +351,7 @@
 
 
 .fact-card p {
-  color: #374151;
+  color: #0e7490; /* ocean blue body text */
   line-height: 1.6;
   margin: 0;
   font-weight: 500;

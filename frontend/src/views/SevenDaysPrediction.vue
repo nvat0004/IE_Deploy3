@@ -79,7 +79,7 @@ const fetchPredictions = async () => {
   }
 };
 
-// ✅ Auto-load from query param
+//  Auto-load from query param
 onMounted(() => {
   const queryBeach = route.query.beach as string | undefined;
   if (queryBeach && beachOptions.includes(queryBeach)) {
