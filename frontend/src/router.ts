@@ -9,9 +9,11 @@ import SevenDaysPrediction from './views/SevenDaysPrediction.vue'
 import RecycleQuiz from './views/RecycleQuiz.vue'
 import ChildHub from './views/ChildHub.vue'
 import BeachInfo from './views/BeachInfo.vue'
+import LandingPage from './views/LandingPage.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
+  { path: '/landing', name: 'LandingPage', component: LandingPage },
   { path: '/education', name: 'Education', component: Education },
   { path: '/safety', name: 'SwimmingSafety', component: SwimmingSafety },
   { path: '/predict', name: 'SevenDaysPrediction', component: SevenDaysPrediction },

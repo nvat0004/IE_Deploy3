@@ -4,47 +4,32 @@
     
     <div class="main-content-wrapper">
       <section class="safety-section">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <h2 class="mb-0">Today's Swimming Safety</h2>
+        <div class="mb-4">
+          <h2 class="mb-3 text-center">Today's Swimming Safety</h2>
+          
+          <!-- Beach Selector -->
+          <div class="beach-selector">
+            <h3 class="beach-selector-title">Select a Beach:</h3>
+            
+            <div class="beach-buttons">
+              <button
+                v-for="beach in beachOptions"
+                :key="beach.name"
+                :class="{ 'beach-button': true, 'beach-button-active': selectedBeach === beach.name }"
+                @click="selectBeach(beach.name)"
+              >
+                {{ beach.name }}
+              </button>
+            </div>
 
-          <div class="text-end">
-        <div class="mb-2">
-          <label for="statusFilter" class="form-label fw-bold me-2">Filter:</label>
-          <select v-model="selectedStatus" id="statusFilter" class="form-select d-inline-block w-auto">
-            <option value="">All</option>
-            <option value="Safe">Safe</option>
-            <option value="Moderate">Moderate</option>
-            <option value="Dangerous">Dangerous</option>
-          </select>
+            <div v-if="selectedBeach" class="selected-info">
+              <div class="selected-beach">
+                <strong>{{ selectedBeach }}</strong>
+                <span class="last-updated">Last updated: {{ formattedDate }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-
-            <ul class="list-group small" style="max-width: 220px; margin-left: auto;">
-          <li v-for="beach in filteredBeaches" :key="beach.name"
-              class="list-group-item d-flex justify-content-between align-items-center">
-            {{ beach.name }}
-            <span
-              class="badge"
-              :class="{
-                'bg-success': beach.status === 'Safe',
-                'bg-warning text-dark': beach.status === 'Moderate',
-                'bg-danger': beach.status === 'Dangerous'
-              }"
-            >
-              {{ beach.status }}
-            </span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="mb-3 text-center">
-      <label for="beach" class="form-label fw-bold">Select Beach:</label>
-      <select v-model="selectedBeach" id="beach" class="form-select w-auto d-inline-block">
-        <option v-for="beach in beachOptions" :key="beach.name" :value="beach.name">
-          {{ beach.name }}
-        </option>
-      </select>
-    </div>
 
     
 
@@ -145,7 +130,6 @@ const selectedBeach = ref("Carrum Beach");
 const status = ref("");
 const reason = ref("");
 const date = ref("");
-const selectedStatus = ref("");
 
 const map = ref<any>(null);
 const markers = ref<any[]>([]);
@@ -209,28 +193,30 @@ const fetchAllSafety = async () => {
     } catch {}
   }
 
-  updateSelectedBeach();
 };
 
-// Sync selected beach card + zoom
-const updateSelectedBeach = () => {
-  const beach = allBeachStatuses.value.find(b => b.name === selectedBeach.value);
-  if (beach) {
-    status.value = beach.status;
-    reason.value = beach.reason;
-    date.value = beach.date;
-
-    const b = beachOptions.find(b => b.name === selectedBeach.value);
-    if (b && map.value) {
-      map.value.setView([b.lat, b.lng], 13);
-    }
+// Fetch safety data for selected beach
+const fetchSafetyData = async () => {
+  if (!selectedBeach.value) return;
+  
+  try {
+    const res = await axios.get(`/api/today-safety?beach=${encodeURIComponent(selectedBeach.value)}`);
+    status.value = res.data.status;
+    reason.value = res.data.reason;
+    date.value = res.data.date;
+  } catch (error) {
+    console.error('Error fetching safety data:', error);
+    status.value = '';
+    reason.value = '';
+    date.value = '';
   }
 };
 
-const filteredBeaches = computed(() => {
-  if (!selectedStatus.value) return allBeachStatuses.value;
-  return allBeachStatuses.value.filter(b => b.status === selectedStatus.value);
-});
+// Beach selection method
+const selectBeach = (beachName: string) => {
+  selectedBeach.value = beachName;
+  fetchSafetyData();
+};
 
 const initMap = () => {
   map.value = L.map("map").setView([-37.9, 145.0], 9);
@@ -256,11 +242,12 @@ const fetchPredictions = async () => {
 onMounted(() => {
   initMap();
   fetchAllSafety();
+  fetchSafetyData();
   fetchPredictions();
 });
 
 watch(selectedBeach, () => {
-  updateSelectedBeach();
+  fetchSafetyData();
   fetchPredictions();
 });
 </script>
@@ -359,6 +346,120 @@ watch(selectedBeach, () => {
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Beach Selector */
+.beach-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.beach-selector-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.beach-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.beach-button {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #374151;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.beach-button:hover {
+  border-color: #3b82f6;
+  background: #f8fafc;
+  color: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.beach-button-active {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.beach-button-active:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.selected-info {
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.selected-beach {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.selected-beach strong {
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.last-updated {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .beach-buttons {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .beach-button {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  
+  .beach-selector {
+    padding: 1rem;
+  }
+  
+  .beach-selector-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .beach-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .beach-button {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+  }
 }
 
 /* Prediction Section  */

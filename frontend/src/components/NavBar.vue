@@ -24,6 +24,15 @@
           aria-label="Navigate to Home page"
         />
         <Button 
+          label="Landing" 
+          icon="pi pi-globe" 
+          severity="secondary" 
+          outlined 
+          size="small"
+          @click="$router.push('/landing')"
+          aria-label="Navigate to Landing page"
+        />
+        <Button 
           label="Safety" 
           icon="pi pi-shield" 
           severity="secondary" 

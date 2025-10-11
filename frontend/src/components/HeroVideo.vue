@@ -26,7 +26,7 @@
           
           <!-- Subtitle -->
           <p class="hero-subtitle">
-            Real-time water quality updates for Beaches
+            Real-time water quality updates for Melbourne's Beaches
           </p>
           
           <!-- CTA Button using PrimeVue Button
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref } from 'vue'
+// import type { Ref } from 'vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 
@@ -78,20 +78,20 @@ const scrollToDashboard = () => {
   }
 }
 
-const scrollToFeatures = () => {
-  if (props.featuresRef?.value) {
-    props.featuresRef.value.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    })
-  }
-}
+// const scrollToFeatures = () => {
+//   if (props.featuresRef?.value) {
+//     props.featuresRef.value.scrollIntoView({ 
+//       behavior: 'smooth',
+//       block: 'start'
+//     })
+//   }
+// }
 </script>
 
 <style scoped>
 .hero-video-container {
   position: relative;
-  height: 100vh;
+  height: 75vh;
   width: 100%;
   overflow: hidden;
   display: flex;
@@ -99,9 +99,9 @@ const scrollToFeatures = () => {
   justify-content: center;
   margin: 0;
   padding: 0;
-  max-height: 100vh;
+  max-height: 75vh;
   max-width: 100%;
-  min-height: 100vh;
+  min-height: 75vh;
   min-width: 100%;
   transition: all 0.8s ease-in-out;
 }
@@ -112,7 +112,7 @@ const scrollToFeatures = () => {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 150px;
+  height: 100px;
   background: linear-gradient(
     to bottom,
     transparent 0%,
@@ -130,14 +130,14 @@ const scrollToFeatures = () => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 75vh;
   object-fit: cover;
   object-position: center;
   z-index: 1;
   max-width: 100%;
-  max-height: 100vh;
+  max-height: 75vh;
   min-width: 100%;
-  min-height: 100vh;
+  min-height: 75vh;
 }
 
 .hero-overlay {
@@ -145,7 +145,7 @@ const scrollToFeatures = () => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 75vh;
   background: rgba(0, 0, 0, 0.4);
   z-index: 2;
 }
@@ -203,12 +203,12 @@ const scrollToFeatures = () => {
 
 .hero-scroll-button {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
   color: white !important;
-  font-size: 1.5rem !important;
+  font-size: 1.2rem !important;
   animation: bounce 2s infinite;
 }
 
@@ -231,14 +231,30 @@ const scrollToFeatures = () => {
 
 
 @media (max-width: 768px) {
+  .hero-video-container {
+    height: 40vh;
+    min-height: 40vh;
+    max-height: 40vh;
+  }
+  
+  .hero-video {
+    height: 40vh;
+    min-height: 40vh;
+    max-height: 40vh;
+  }
+  
+  .hero-overlay {
+    height: 40vh;
+  }
+  
   .hero-title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
   }
   
   .hero-subtitle {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
   }
   
   .hero-content {
@@ -246,20 +262,41 @@ const scrollToFeatures = () => {
   }
   
   .hero-button {
-    padding: 10px 24px !important;
+    padding: 8px 20px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .hero-scroll-button {
     font-size: 1rem !important;
+    bottom: 0.5rem;
   }
 }
 
 @media (max-width: 480px) {
+  .hero-video-container {
+    height: 35vh;
+    min-height: 35vh;
+    max-height: 35vh;
+  }
+  
+  .hero-video {
+    height: 35vh;
+    min-height: 35vh;
+    max-height: 35vh;
+  }
+  
+  .hero-overlay {
+    height: 35vh;
+  }
+  
   .hero-title {
-    font-size: 1.75rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.6rem;
   }
   
   .hero-subtitle {
-    font-size: 0.9rem;
-    margin-bottom: 1.25rem;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
   }
   
   .hero-content {
@@ -267,13 +304,13 @@ const scrollToFeatures = () => {
   }
   
   .hero-button {
-    padding: 8px 20px !important;
-    font-size: 0.9rem !important;
+    padding: 6px 16px !important;
+    font-size: 0.8rem !important;
   }
   
   .hero-scroll-button {
-    bottom: 1rem;
-    font-size: 1.25rem !important;
+    font-size: 0.9rem !important;
+    bottom: 0.3rem;
   }
 }
 
