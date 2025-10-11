@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-4 text-md-end mt-3 mt-md-0">
           <div class="fw-bold text-white mb-1">Risk level</div>
-          <span class="badge risk-badge" :class="badgeClass">{{ currentBeachData.rating }}/5</span>
+          <span class="badge risk-badge" :class="badgeClass">{{ currentBeachData.rating }}/10</span>
         </div>
       </div>
 
@@ -36,17 +36,21 @@
         <div class="card-body">
           <h5 class="mb-3">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            Rating:
+            Overall Safety Hazard Rating:
             <span class="badge" :class="badgeClass">
-              {{ currentBeachData.rating }}/5
+              {{ currentBeachData.rating }}/10
             </span>
           </h5>
-          <p><strong>Reason:</strong> {{ ratingReason }}</p>
+          <p><strong>Justification:</strong> {{ ratingReason }}</p>
+          <p style="font-size: 0.875rem; color: #dcdcdc;">The Safety Hazard Rating is calculated based on marine hazards such as wave conditions, currents and beach features.</p>
+          <p style="font-size: 0.875rem; color: #dcdcdc;">Higher-risk factors increase the score, while calm and safe conditions lower it.</p>
           <hr />
           <div class="row">
             <div class="col-md-6 mb-2" v-for="(value, key) in displayableHazardFields" :key="key">
               <i class="fas fa-info-circle me-2" v-tooltip="formatKey(key)"></i>
               <strong>{{ formatKey(key) }}:</strong> {{ value || 'N/A' }}
+              <div class="small mt-1" style="color: #dcdcdc;">{{ explanations[key] || '' }}
+              </div>
             </div>
           </div>
         </div>
@@ -95,13 +99,21 @@ import { ref, computed, watch, onMounted } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+const getRiskStatus = (rating) => {
+  if (rating >= 8) return 'Dangerous';
+  if (rating >= 4) return 'Moderate';
+  return 'Safe';
+};
+
 // Combined beach data
 const beachData = {
   'Dromana Beach': {
     lat: -38.3318, lng: 145.0169,
     // Hazard data
-    wave_height: '0.5', rip_count: '0', beach_type: 'Reflective', current_strength: 'Low',
-    shore_break: 'Weak', wave_type: 'Gentle', wind_direction: 'Northwest', wind_strength: 'Moderate', rating: 2,
+    wave_height: '0.5', rip_current_count: '0', beach_type: 'Reflective', current_strength: 'Low',
+    shore_break: 'Weak', wave_type: 'Gentle', dominant_swell_direction: 'Northwest', mean_wave_period: '5', 
+    has_rocks: "No", has_reefs: "No" , has_structures: "Yes" , has_headlands: "No" ,	has_outfalls: "No" ,	has_sharks: "Yes" ,	has_bluebottles: "No" ,	
+    has_stingers: "No", rating: 2,
     // Facility data
     shower: 'Yes', swimmingpool: 'No', tapwater: 'Yes', shop: 'Yes', toilet: 'Yes', parking: 'Yes', 
     barbique: 'Yes', picnic: 'Yes', shades: 'Yes', shelter: 'Yes', playground: 'Yes', phonecharging: 'Yes'
@@ -109,8 +121,10 @@ const beachData = {
   'Carrum Beach': {
     lat: -38.0836, lng: 145.1235,
     // Hazard data
-    wave_height: '0.6', rip_count: '12', beach_type: 'LTT - TBR', current_strength: 'High',
-    shore_break: 'Strong', wave_type: 'Moderate', wind_direction: 'West', wind_strength: 'Strong', rating: 3,
+    wave_height: '0.6', rip_current_count: '12', beach_type: 'LTT - TBR', current_strength: 'High',
+    shore_break: 'Strong', wave_type: 'Moderate', dominant_swell_direction: 'West', mean_wave_period: '5', 
+    has_rocks: "Yes", has_reefs: "Yes" , has_structures: "Yes" , has_headlands: "No" ,	has_outfalls: "No" ,	has_sharks: "Yes" ,	has_bluebottles: "No" ,	
+    has_stingers: "No", rating: 3,
     // Facility data
     shower: 'Yes', swimmingpool: 'Yes', tapwater: 'Yes', shop: 'Yes', toilet: 'Yes', parking: 'Yes', 
     barbique: 'Yes', picnic: 'Yes', shades: 'Yes', shelter: 'Yes', playground: 'Yes', phonecharging: 'Yes'
@@ -118,17 +132,20 @@ const beachData = {
   'St Kilda Beach': {
     lat: -37.8675, lng: 144.9730,
     // Hazard data
-    wave_height: '0.4', rip_count: '7', beach_type: 'LTT - TBR', current_strength: 'Moderate',
-    shore_break: 'Moderate', wave_type: 'Choppy', wind_direction: 'Southwest', wind_strength: 'Moderate', rating: 3,
-    // Facility data
+    wave_height: '0.4', rip_current_count: '7', beach_type: 'LTT - TBR', current_strength: 'Moderate',
+    shore_break: 'Moderate', wave_type: 'Choppy', dominant_swell_direction: 'Southwest', mean_wave_period: '5',  
+    has_rocks: "No", has_reefs: "No" , has_structures: "Yes" , has_headlands: "No" ,	has_outfalls: "No" ,	has_sharks: "Yes" ,	has_bluebottles: "No" ,	
+    has_stingers: "No", rating: 3,
     shower: 'No', swimmingpool: 'Yes', tapwater: 'Yes', shop: 'Yes', toilet: 'Yes', parking: 'Yes', 
     barbique: 'No', picnic: 'Yes', shades: 'Yes', shelter: 'Yes', playground: 'Yes', phonecharging: 'Yes'
   },
   'Port Melbourne Beach': {
     lat: -37.8361, lng: 144.9281,
     // Hazard data
-    wave_height: '0.3', rip_count: '0', beach_type: 'LTT - TBR', current_strength: 'Low',
-    shore_break: 'Weak', wave_type: 'Gentle', wind_direction: 'Southwest', wind_strength: 'Moderate', rating: 2,
+    wave_height: '0.3', rip_current_count: '0', beach_type: 'LTT - TBR', current_strength: 'Low',
+    shore_break: 'Weak', wave_type: 'Gentle', dominant_swell_direction: 'Southwest', mean_wave_period: '5',  
+    has_rocks: "No", has_reefs: "No" , has_structures: "Yes" , has_headlands: "No" ,	has_outfalls: "No" ,	has_sharks: "Yes" ,	has_bluebottles: "No" ,	
+    has_stingers: "No", rating: 2,
     // Facility data
     shower: 'No', swimmingpool: 'No', tapwater: 'Yes', shop: 'Yes', toilet: 'Yes', parking: 'Yes', 
     barbique: 'No', picnic: 'No', shades: 'Yes', shelter: 'Yes', playground: 'Yes', phonecharging: 'Yes'
@@ -136,8 +153,10 @@ const beachData = {
   'Altona Beach': {
     lat: -37.8678, lng: 144.8296,
     // Hazard data
-    wave_height: '0.1', rip_count: '0', beach_type: 'Reflective', current_strength: 'Low',
-    shore_break: 'None', wave_type: 'Calm', wind_direction: 'Southwest', wind_strength: 'Mild', rating: 1,
+     wave_height: '0.1', rip_current_count: '0', beach_type: 'Reflective', current_strength: 'Low',
+    shore_break: 'None', wave_type: 'Calm', dominant_swell_direction: 'Southwest', mean_wave_period: '5',   
+    has_rocks: "No", has_reefs: "No" , has_structures: "Yes" , has_headlands: "No" ,	has_outfalls: "No" ,	has_sharks: "Yes" ,	has_bluebottles: "No" ,	
+    has_stingers: "No", rating: 1,
     // Facility data
     shower: 'No', swimmingpool: 'No', tapwater: 'Yes', shop: 'Yes', toilet: 'Yes', parking: 'Yes', 
     barbique: 'No', picnic: 'Yes', shades: 'Yes', shelter: 'Yes', playground: 'No', phonecharging: 'Yes'
@@ -168,25 +187,45 @@ const currentBeachData = computed(() => beachData[selectedBeach.value])
 
 const badgeClass = computed(() => {
   const r = currentBeachData.value.rating
-  if (r >= 4) return 'bg-danger'
-  if (r >= 2) return 'bg-warning text-dark'
+  if (r >= 8) return 'bg-danger'
+  if (r >= 4) return 'bg-warning text-dark'
   return 'bg-success'
 })
 
 const hazardCardClass = computed(() => {
   const r = currentBeachData.value.rating
-  if (r >= 4) return 'bg-danger'
-  if (r >= 2) return 'bg-warning text-dark'
+  if (r >= 8) return 'bg-danger'
+  if (r >= 4) return 'bg-warning text-dark'
   return 'bg-success'
 })
 
 const ratingReason = computed(() => {
-  const { rating, rip_count, wave_height } = currentBeachData.value
-  if (rating >= 4) return `High risk due to ${rip_count} rips and strong wave conditions.`
-  if (rating === 3) return `Moderate risk with ${rip_count} rips and mild waves.`
-  if (rating === 2) return `Low risk — calm waves and no major hazards.`
-  return `Very low risk — flat beach and no rips.`
+  const { rating, rip_current_count, wave_height } = currentBeachData.value
+  if (rating >= 8) return `Very High Risk: Dangerous Waves or Rips.`
+  if (rating >= 6) return `High Risk: Hazardous Wave or Rip Conditions.`
+  if (rating >= 4) return `Moderate Risk: Some Safety Hazards Present.`
+  if (rating >= 2) return `Low Risk: Generally Calm with Minor Hazards.`
+  return `Very Low Risk: Flat Beach and No Rips.`
 })
+
+const explanations = {
+  wave_height: "Estimated wave height in metres",
+  rip_current_count: "Number of rip currents where more rips mean higher swimmer risk",
+  beach_type: "Reflective = Steep & calm, LTT-TBR = Flat with rip-prone sandbars",
+  current_strength: "Strength of water movement where stronger currents are riskier",
+  shore_break: "Impact of waves at the shoreline where stronger shore breaks can be hazardous",
+  wave_type: "Describes the nature of the waves, Gentle, Choppy, etc",
+  dominant_swell_direction: "Main direction waves approach the beach which affects wave strength and safety",
+  mean_wave_period: "Average time (in seconds) between wave crests where longer crests means more powerful waves",
+  has_rocks: "Presence of rocks that may pose injury risks to swimmers", 
+  has_reefs: "Presence of coral or rocky reefs causing potential sharp injuries and create strong currents" , 
+  has_structures: "Presence of man-made structures like piers that can alter currents and trap swimmers near edges" , 
+  has_headlands: "Presence of natural elevated land causing uneven wave patterns and currents",	
+  has_outfalls: "Presence of stormwater or sewage outflow pipes that can pollute water quality at the beach" ,	
+  has_sharks: "Presence of sharks" ,	
+  has_bluebottles: "Presence of bluebottle jellyfish" ,	
+  has_stingers: "presence of stinging marine life like jellyfish or sea lice",
+}
 
 const displayableHazardFields = computed(() => {
   const exclude = ['rating', 'lat', 'lng', 'shower', 'swimmingpool', 'tapwater', 'shop', 'toilet', 'parking', 'barbique', 'picnic', 'shades', 'shelter', 'playground', 'phonecharging']
@@ -206,27 +245,43 @@ const isCountValue = (key) => {
 
 // Map initialization
 onMounted(() => {
-  map.value = L.map('map').setView([-37.9, 145.0], 10)
+  map.value = L.map('map').setView([-37.9, 145.0], 10);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-  }).addTo(map.value)
+  }).addTo(map.value);
 
-  for (const [beach, info] of Object.entries(beachData)) {
-    const marker = L.marker([info.lat, info.lng])
-      .addTo(map.value)
-      .bindPopup(`<strong>${beach}</strong><br/>Rating: ${info.rating}`)
-    marker.on('click', () => {
-      selectedBeach.value = beach
-    })
-    markers.value[beach] = marker
+  for (const [beachName, info] of Object.entries(beachData)) {
+    const status = getRiskStatus(info.rating);
+    const marker = createMarker(info, status, beachName); // 👈 pass beachName
+    markers.value[beachName] = marker;
   }
-})
+});
 
 // Watch for beach selection changes
 watch(selectedBeach, (beach) => {
   const coords = beachData[beach]
   if (coords) map.value.setView([coords.lat, coords.lng], 14)
 })
+
+const createMarker = (beach, status, beachName) => {
+  const color = status === "Safe" ? "green" : status === "Moderate" ? "orange" : "red";
+
+  const marker = L.circleMarker([beach.lat, beach.lng], {
+    radius: 10,
+    fillColor: color,
+    color: "#000",
+    weight: 1,
+    fillOpacity: 0.8,
+  })
+    .addTo(map.value)
+    .bindPopup(`<b>${beachName}</b><br>Status: ${status}`);
+
+   marker.on("click", () => {
+    selectedBeach.value = beachName;
+  });
+
+  return marker;
+};
 </script>
 
 <style scoped>
