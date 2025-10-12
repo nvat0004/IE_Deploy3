@@ -3,7 +3,19 @@
     <div class="page-background"></div>
     
     <div class="main-content-wrapper">
-      <section class="childhub-section">
+      <!-- Sanitation Guide View -->
+      <div v-if="showSanitationGuide" class="sanitation-guide-container">
+        <div class="back-button-container">
+          <button @click="showSanitationGuide = false" class="back-button">
+            <i class="pi pi-arrow-left"></i>
+            Back to Activities
+          </button>
+        </div>
+        <SanitationGuide />
+      </div>
+
+      <!-- Main Activities View -->
+      <section v-else class="childhub-section">
         <div class="childhub-header">
           <h1 class="childhub-title">Kids' Learning Hub</h1>
           <p class="childhub-subtitle">Fun activities to learn about water safety and recycling!</p>
@@ -24,17 +36,17 @@
             </router-link>
           </div>
 
-          <!-- Sanitation Guide Card (Placeholder) -->
+          <!-- Sanitation Guide Card -->
           <div class="activity-card sanitation-card">
             <h3 class="card-title">Sanitation Guide</h3>
-            <p class="card-description">Coming soon! Learn about proper hygiene and sanitation practices.</p>
+            <p class="card-description">Learn proper beach hygiene through interactive scenarios and fun comics!</p>
             <div class="card-features">
-              <span class="feature-tag">Coming Soon</span>
+              <span class="feature-tag">Interactive</span>
               <span class="feature-tag">Hygiene</span>
-              <span class="feature-tag">Safety</span>
+              <span class="feature-tag">Comics</span>
             </div>
-            <button class="activity-button sanitation-button" disabled>
-              Coming Soon
+            <button @click="showSanitationGuide = true" class="activity-button sanitation-button">
+              Start Learning
             </button>
           </div>
           
@@ -79,7 +91,10 @@
 </template>
 
 <script setup lang="ts">
-// No complex logic needed for this hub page
+import { ref } from 'vue'
+import SanitationGuide from '@/components/SanitationGuide.vue'
+
+const showSanitationGuide = ref(false)
 </script>
 
 <style scoped>
@@ -301,16 +316,22 @@
 }
 
 .sanitation-button {
-  background: linear-gradient(135deg, #9ca3af, #6b7280);
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
-  box-shadow: 0 4px 12px rgba(156, 163, 175, 0.3);
-  cursor: not-allowed;
-  opacity: 0.7;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  cursor: pointer;
+  opacity: 1;
 }
 
 .sanitation-button:hover {
-  transform: none;
-  box-shadow: 0 4px 12px rgba(156, 163, 175, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+/* Sanitation Card Special Styling */
+.sanitation-card::before {
+  background: linear-gradient(90deg, #10b981, #059669, #047857);
 }
 
 
@@ -355,6 +376,42 @@
   line-height: 1.6;
   margin: 0;
   font-weight: 500;
+}
+
+/* Sanitation Guide Styles */
+.sanitation-guide-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.back-button-container {
+  margin-bottom: 1rem;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.back-button i {
+  font-size: 0.9rem;
 }
 
 /* Footer */
