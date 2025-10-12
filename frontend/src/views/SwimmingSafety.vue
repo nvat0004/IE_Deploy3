@@ -33,18 +33,20 @@
 
     
 
-    <div
-      v-if="status"
-      class="card text-center mx-auto shadow p-3 mb-4"
-      style="max-width: 500px;"
-      :class="{
-        'border-success': status === 'Safe',
-        'border-warning': status === 'Moderate',
-        'border-danger': status === 'Dangerous'
-      }"
-    >
-      <div class="card-body">
-        <h5 class="card-title">{{ formattedDate }}</h5>
+    <!-- Water Status and Guide Button Row -->
+    <div v-if="status" class="row justify-content-center mb-4">
+      <div class="col-auto">
+        <div
+          class="card text-center shadow p-3"
+          style="max-width: 500px;"
+          :class="{
+            'border-success': status === 'Safe',
+            'border-warning': status === 'Moderate',
+            'border-danger': status === 'Dangerous'
+          }"
+        >
+          <div class="card-body">
+            <h5 class="card-title">{{ formattedDate }}</h5>
         <p
           class="card-text fw-bold fs-4"
           :class="{
@@ -56,6 +58,19 @@
           {{ status }}
         </p>
         <p class="card-text">{{ reason }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-auto d-flex align-items-center">
+        <button 
+          @click="showGuide = !showGuide" 
+          class="btn guide-button"
+          :class="{ 'guide-button-active': showGuide }"
+          :title="showGuide ? 'Close Guide' : 'Open Guide'"
+        >
+          <i class="fas fa-info-circle me-1"></i>
+          Guide
+        </button>
       </div>
     </div>
 
@@ -117,6 +132,49 @@
       <small>© 2025 AquaProtect - TA22 Team </small>
       <small>Keeping families safe at Beaches</small>
     </footer>
+
+    <!-- Guide Modal/Overlay -->
+    <div v-if="showGuide" class="guide-overlay" @click="showGuide = false">
+      <div class="guide-content" @click.stop>
+        <div class="guide-header">
+          <h4 class="mb-0">Swimming Safety Guide</h4>
+          <button @click="showGuide = false" class="btn-close" aria-label="Close">
+            <span class="close-icon">X</span>
+          </button>
+        </div>
+        <div class="guide-body">
+          <p class="mb-3">Planning a visit to the beach? This page provides a complete overview of the current swimming safety status of the beach to help you decide the right beach for you and your family!</p>
+          
+          <h5 class="mb-3">How does BeachProtect determine the safety of your beach?</h5>
+          <p class="mb-3">Swimming safety is determined based on Enterococci bacteria levels in the water which is a key indicator of faecal contamination and general water quality.</p>
+          
+          <p class="mb-3">According to the U.S. Environmental Protection Agency (EPA, 2012) and NSW Government's Guidelines for Beach Water Quality (2020), Enterococci levels are classified as follows:</p>
+          
+          <div class="safety-levels mb-4">
+            <div class="safety-level safe">
+              <span class="level-icon">✅</span>
+              <span class="level-text"><strong>0 to 35 organisms/100 mL:</strong> Safe for swimming</span>
+            </div>
+            <div class="safety-level moderate">
+              <span class="level-icon">⚠️</span>
+              <span class="level-text"><strong>36 to 104 organisms/100 mL:</strong> Moderately safe for swimming</span>
+            </div>
+            <div class="safety-level dangerous">
+              <span class="level-icon">❌</span>
+              <span class="level-text"><strong>105+ organisms/100 mL:</strong> Unsafe for swimming, avoid contact</span>
+            </div>
+          </div>
+          
+          <p class="mb-3">Use the interactive tools below to:</p>
+          
+          <ul class="guide-list">
+            <li><strong>Check Today's Safety Status!</strong> Select your favourite beach from the interactive list to instantly see whether it's currently Safe, Moderate, or Dangerous to swim, along with a detailed reason and last updated time.</li>
+            <li><strong>Explore our Interactive Safety Map!</strong> View real-time statuses of all listed beaches on a beautifully styled map. Coloured markers quickly indicate each beach's safety level: 🟢 Green: Safe, 🟠 Orange: Moderate, 🔴 Red: Dangerous.</li>
+            <li><strong>7-Day Safety Forecast!</strong> Planning ahead? Our 7-day predictive tool uses advanced predictive modelling to show you the expected swimming conditions for the upcoming week. Each forecast card gives a clear status and reason so you can plan your beach trips safely and confidently.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -130,6 +188,7 @@ const selectedBeach = ref("Carrum Beach");
 const status = ref("");
 const reason = ref("");
 const date = ref("");
+const showGuide = ref(false);
 
 const map = ref<any>(null);
 const markers = ref<any[]>([]);
@@ -550,5 +609,249 @@ h2 {
 .footer small:first-child {
   font-weight: 600;
   color: white;
+}
+
+/* Guide Button Styles */
+.guide-button {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border: 2px solid #3b82f6;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.guide-button:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  color: white;
+}
+
+.guide-button.guide-button-active {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.guide-button.guide-button-active:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+/* Guide Modal Styles */
+.guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.guide-content {
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 248, 255, 0.98) 0%,
+    rgba(248, 250, 252, 0.99) 20%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  max-width: 700px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: guideSlideIn 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px 15px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.guide-header h4 {
+  font-weight: 600;
+  margin: 0;
+}
+
+.guide-body {
+  padding: 25px;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+.guide-body p {
+  color: #475569;
+  font-size: 1.05rem;
+}
+
+.guide-body h5 {
+  color: #1e40af;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.safety-levels {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.safety-level {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
+.safety-level:last-child {
+  margin-bottom: 0;
+}
+
+.level-icon {
+  font-size: 1.2rem;
+  margin-right: 12px;
+  min-width: 24px;
+}
+
+.level-text {
+  color: #374151;
+  font-size: 1rem;
+}
+
+.guide-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.guide-list li {
+  margin-bottom: 16px;
+  color: #475569;
+  font-size: 1rem;
+  position: relative;
+}
+
+.guide-list li::marker {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: white;
+  opacity: 0.9;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-weight: bold;
+}
+
+.btn-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.btn-close:active {
+  transform: scale(0.95);
+}
+
+.close-icon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  display: block;
+}
+
+@keyframes guideSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .guide-button {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .guide-content {
+    margin: 10px;
+    max-height: 90vh;
+  }
+  
+  .guide-header {
+    padding: 15px 20px 10px;
+  }
+  
+  .guide-body {
+    padding: 20px;
+  }
+  
+  .guide-body p {
+    font-size: 1rem;
+  }
+  
+  .guide-body h5 {
+    font-size: 1.1rem;
+  }
+  
+  .guide-list li {
+    font-size: 0.95rem;
+  }
+  
+  .btn-close {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .close-icon {
+    font-size: 1.2rem;
+  }
+  
+  .safety-levels {
+    padding: 15px;
+  }
+  
+  .level-text {
+    font-size: 0.9rem;
+  }
 }
 </style>

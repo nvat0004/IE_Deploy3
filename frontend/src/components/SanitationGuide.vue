@@ -1,9 +1,70 @@
 <template>
   <div class="sanitation-guide">
-    <div class="guide-header">
-      <h2 class="guide-title">Sanitation Guide</h2>
-      <p class="guide-subtitle">Learn proper beach hygiene practices through interactive scenarios</p>
+    <!-- Results Screen -->
+    <div v-if="showResults" class="results-container">
+      <div class="results-header">
+        <h2 class="results-title">🎉 Congratulations!</h2>
+        <p class="results-subtitle">You've completed the Sanitation Guide!</p>
+      </div>
+
+      <div class="score-container">
+        <div class="score-circle" :style="{ borderColor: getScoreColor }">
+          <div class="score-percentage" :style="{ color: getScoreColor }">
+            {{ scorePercentage }}%
+          </div>
+          <div class="score-label">Score</div>
+        </div>
+        
+        <div class="score-details">
+          <h3 class="score-message" :style="{ color: getScoreColor }">
+            {{ getScoreMessage }}
+          </h3>
+          <p class="score-breakdown">
+            You got <strong>{{ correctCount }}</strong> out of <strong>{{ totalScenarios }}</strong> scenarios correct!
+          </p>
+        </div>
+      </div>
+
+      <div class="detailed-results">
+        <h4 class="detailed-title">Your Answers:</h4>
+        <div class="answer-list">
+          <div 
+            v-for="(answer, index) in userAnswers" 
+            :key="index"
+            class="answer-item"
+            :class="{ 'correct': answer.correct, 'incorrect': !answer.correct }"
+          >
+            <div class="answer-icon">
+              {{ answer.correct ? '✅' : '❌' }}
+            </div>
+            <div class="answer-details">
+              <div class="scenario-name">{{ scenarios[answer.scenario].title }}</div>
+              <div class="answer-text">
+                {{ answer.answer === 'left' ? scenarios[answer.scenario].leftOption : scenarios[answer.scenario].rightOption }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button @click="restartGuide" class="action-button restart-button">
+          <i class="fas fa-redo me-2"></i>
+          Try Again
+        </button>
+        <button @click="closeGuide" class="action-button close-button">
+          <i class="fas fa-check me-2"></i>
+          Finish
+        </button>
+      </div>
     </div>
+
+    <!-- Learning Content -->
+    <div v-else>
+      <div class="guide-header">
+        <h2 class="guide-title">Sanitation Guide</h2>
+        <p class="guide-subtitle">Learn proper beach hygiene practices through interactive scenarios</p>
+      </div>
 
     <div class="scenario-container">
       <div class="scenario-header">
@@ -20,6 +81,10 @@
             :alt="currentScenario.title"
             class="center-image"
           />
+        
+        </div>
+        <div class="scenario-text">
+          <p class="intro-text">What would you do?</p>
         </div>
 
         <div class="options-container">
@@ -69,7 +134,7 @@
 
         <button 
           class="nav-button next-button"
-          :disabled="currentIndex === scenarios.length - 1"
+          :disabled="!hasSelection"
           @click="nextScenario"
         >
           Next
@@ -77,6 +142,7 @@
         </button>
       </div>
     </div>
+    </div> <!-- Close v-else div -->
   </div>
 </template>
 
@@ -206,6 +272,8 @@ const scenarios: Scenario[] = [
 
 const currentIndex = ref(0)
 const selectedOption = ref<'left' | 'right' | null>(null)
+const showResults = ref(false)
+const userAnswers = ref<Array<{scenario: number, answer: 'left' | 'right', correct: boolean}>>([])
 
 const currentScenario = computed(() => scenarios[currentIndex.value])
 
@@ -226,10 +294,27 @@ const getResultDescription = () => {
   return isCorrect.value ? currentScenario.value.correctDescription : currentScenario.value.wrongDescription
 }
 
+// Check if user has made a selection
+const hasSelection = computed(() => {
+  return selectedOption.value !== null
+})
+
 const nextScenario = () => {
+  // Record current answer before moving to next scenario
+  if (selectedOption.value) {
+    userAnswers.value.push({
+      scenario: currentIndex.value,
+      answer: selectedOption.value,
+      correct: selectedOption.value === currentScenario.value.correctAnswer
+    })
+  }
+  
   if (currentIndex.value < scenarios.length - 1) {
     currentIndex.value++
     selectedOption.value = null
+  } else {
+    // All scenarios completed, show results screen
+    showResults.value = true
   }
 }
 
@@ -238,6 +323,56 @@ const previousScenario = () => {
     currentIndex.value--
     selectedOption.value = null
   }
+}
+
+// Results screen calculations
+const correctCount = computed(() => {
+  return userAnswers.value.filter(answer => answer.correct).length
+})
+
+const totalScenarios = computed(() => {
+  return scenarios.length
+})
+
+const scorePercentage = computed(() => {
+  return Math.round((correctCount.value / totalScenarios.value) * 100)
+})
+
+const getScoreMessage = computed(() => {
+  if (scorePercentage.value >= 90) {
+    return "Excellent! You're a beach hygiene expert!"
+  } else if (scorePercentage.value >= 70) {
+    return "Great job! You know your beach hygiene well!"
+  } else if (scorePercentage.value >= 50) {
+    return "Good effort! Keep learning about beach hygiene!"
+  } else {
+    return "Keep practicing! Beach hygiene is important for everyone!"
+  }
+})
+
+const getScoreColor = computed(() => {
+  if (scorePercentage.value >= 90) return '#10b981' // green
+  if (scorePercentage.value >= 70) return '#3b82f6' // blue
+  if (scorePercentage.value >= 50) return '#f59e0b' // yellow
+  return '#ef4444' // red
+})
+
+// Restart the guide
+const restartGuide = () => {
+  currentIndex.value = 0
+  selectedOption.value = null
+  showResults.value = false
+  userAnswers.value = []
+}
+
+// Emit events to parent component
+const emit = defineEmits<{
+  close: []
+}>()
+
+const closeGuide = () => {
+  // Reset to the beginning interface instead of closing
+  restartGuide()
 }
 </script>
 
@@ -266,6 +401,13 @@ const previousScenario = () => {
 .guide-subtitle {
   color: #64748b;
   font-size: 1.1rem;
+}
+
+.intro-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1rem;
 }
 
 .scenario-container {
@@ -465,6 +607,228 @@ const previousScenario = () => {
   }
   
   .nav-button {
+    justify-content: center;
+  }
+}
+
+/* Results Screen Styles */
+.results-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.results-header {
+  margin-bottom: 2rem;
+}
+
+.results-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.results-subtitle {
+  font-size: 1.2rem;
+  color: #64748b;
+}
+
+.score-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border: 8px solid;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.score-percentage {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 1rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+.score-details {
+  text-align: left;
+  max-width: 300px;
+}
+
+.score-message {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.score-breakdown {
+  font-size: 1.1rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.detailed-results {
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.detailed-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.answer-list {
+  display: grid;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.answer-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.answer-item.correct {
+  background: #f0fdf4;
+  border-color: #10b981;
+}
+
+.answer-item.incorrect {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.answer-icon {
+  font-size: 1.5rem;
+  min-width: 30px;
+}
+
+.answer-details {
+  flex: 1;
+}
+
+.scenario-name {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.answer-text {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.results-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.restart-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.restart-button:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.close-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.close-button:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Disabled button styles */
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #e2e8f0;
+  color: #94a3b8;
+}
+
+.nav-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .score-container {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .score-circle {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .score-percentage {
+    font-size: 2rem;
+  }
+  
+  .results-title {
+    font-size: 2rem;
+  }
+  
+  .score-message {
+    font-size: 1.2rem;
+  }
+  
+  .results-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .action-button {
+    width: 200px;
     justify-content: center;
   }
 }

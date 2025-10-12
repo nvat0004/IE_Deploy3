@@ -1,7 +1,38 @@
 <template>
   <div class="container-fluid py-4 beach-info-page">
     <div class="container">
-      <h2 class="mb-4 text-white">{{ selectedBeach }}</h2>
+      <!-- Title row -->
+      <div class="row align-items-center mb-4">
+        <div class="col">
+          <h2 class="mb-0 text-white">{{ selectedBeach }}</h2>
+        </div>
+      </div>
+
+      <!-- Guide Modal/Overlay -->
+      <div v-if="showGuide" class="guide-overlay" @click="showGuide = false">
+        <div class="guide-content" @click.stop>
+          <div class="guide-header">
+            <h4 class="mb-0">Beach Information Guide</h4>
+            <button @click="showGuide = false" class="btn-close" aria-label="Close">
+              <span class="close-icon">X</span>
+            </button>
+          </div>
+          <div class="guide-body">
+            <p class="mb-3">Planning a visit to the beach? This page provides a complete overview of the safety conditions, natural features, and available facilities to help you decide the right beach for you and your family!</p>
+            
+            <p class="mb-3">Use the interactive tools below to:</p>
+            
+            <ul class="guide-list">
+              <li>Select a beach from the Dropdown list to view live data for that location</li>
+              <li>Check the beach's safety hazard rating, calculated from marine conditions like wave height, rip currents, and current strength</li>
+              <li>Explore natural features such as beach type, wave conditions, presence of rocks, reefs, sharks, and more</li>
+              <li>View a full list of available facilities like toilets, showers, barbecues, shelters, picnic areas, playgrounds, shops, and parking</li>
+              <li>See all beaches on the map, color-coded by risk level (Green = Safe, Orange = Moderate, Red = Dangerous)</li>
+              <li>Hover or click on any beach on the map to select it and view more details instantly</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
       <!-- Beach selector (left) + facilities legend (center) + risk level (right) -->
       <div class="row mb-4 align-items-end gx-3">
@@ -91,6 +122,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Fixed Side Guide Button -->
+    <button 
+      @click="showGuide = !showGuide" 
+      class="fixed-guide-button"
+      :class="{ 'guide-button-active': showGuide }"
+      :title="showGuide ? 'Close Guide' : 'Open Guide'"
+    >
+      <i class="fas fa-info-circle"></i>
+      <span class="guide-text">Guide</span>
+    </button>
   </div>
 </template>
 
@@ -181,6 +223,7 @@ const facilityList = {
 const selectedBeach = ref('Dromana Beach')
 const map = ref(null)
 const markers = ref({})
+const showGuide = ref(false)
 
 // Computed properties
 const currentBeachData = computed(() => beachData[selectedBeach.value])
@@ -314,8 +357,235 @@ const createMarker = (beach, status, beachName) => {
   margin-bottom: 0.5rem;
 }
 
+/* Fixed Side Guide Button Styles */
+.fixed-guide-button {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border: 2px solid #3b82f6;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 16px 12px;
+  border-radius: 12px 0 0 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 60px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fixed-guide-button:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  border-color: #2563eb;
+  transform: translateY(-50%) translateX(-5px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+  color: white;
+}
+
+.fixed-guide-button.guide-button-active {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-color: #ef4444;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+}
+
+.fixed-guide-button.guide-button-active:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+  border-color: #dc2626;
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+}
+
+.guide-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.fixed-guide-button i {
+  font-size: 1.2rem;
+}
+
+/* Guide Modal Styles */
+.guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.guide-content {
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 248, 255, 0.98) 0%,
+    rgba(248, 250, 252, 0.99) 20%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: guideSlideIn 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px 15px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.guide-header h4 {
+  font-weight: 600;
+  margin: 0;
+}
+
+.guide-body {
+  padding: 25px;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+.guide-body p {
+  color: #475569;
+  font-size: 1.05rem;
+}
+
+.guide-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.guide-list li {
+  margin-bottom: 12px;
+  color: #475569;
+  font-size: 1rem;
+  position: relative;
+}
+
+.guide-list li::marker {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: white;
+  opacity: 0.9;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-weight: bold;
+}
+
+.btn-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.btn-close:active {
+  transform: scale(0.95);
+}
+
+.close-icon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  display: block;
+}
+
+@keyframes guideSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (max-width: 768px) {
   .risk-badge { font-size: 1rem; }
   .legend { display: inline-block; margin-top: 0.5rem; }
+  
+  .fixed-guide-button {
+    right: 10px;
+    padding: 12px 8px;
+    min-width: 50px;
+    font-size: 0.9rem;
+  }
+  
+  .guide-text {
+    font-size: 0.7rem;
+  }
+  
+  .fixed-guide-button i {
+    font-size: 1rem;
+  }
+  
+  .guide-content {
+    margin: 10px;
+    max-height: 90vh;
+  }
+  
+  .guide-header {
+    padding: 15px 20px 10px;
+  }
+  
+  .btn-close {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .close-icon {
+    font-size: 1.2rem;
+  }
+  
+  .guide-body {
+    padding: 20px;
+  }
+  
+  .guide-body p {
+    font-size: 1rem;
+  }
+  
+  .guide-list li {
+    font-size: 0.95rem;
+  }
 }
 </style>
