@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 // Import images
 import clothesCenter from '@/assets/Comics/Clothes/Clothes.png'
@@ -275,6 +275,14 @@ const selectedOption = ref<'left' | 'right' | null>(null)
 const showResults = ref(false)
 const userAnswers = ref<Array<{scenario: number, answer: 'left' | 'right', correct: boolean}>>([])
 
+// Audio for congratulations
+const happySound = new Audio('/sounds/happy.mp3')
+
+// Add error handling for audio loading
+happySound.addEventListener('error', (e) => {
+  console.warn('Audio file failed to load:', happySound.src)
+})
+
 const currentScenario = computed(() => scenarios[currentIndex.value])
 
 const isCorrect = computed(() => {
@@ -315,6 +323,8 @@ const nextScenario = () => {
   } else {
     // All scenarios completed, show results screen
     showResults.value = true
+    // Play congratulations sound
+    happySound.play().catch(e => console.warn('Could not play congratulations sound:', e))
   }
 }
 

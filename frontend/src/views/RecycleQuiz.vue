@@ -5,7 +5,7 @@
         <h2 class="fw-bold">🛢️ Trash Bin Quiz</h2>
         <div>
           <button @click="toggleMute" class="btn btn-outline-secondary me-2">
-            <font-awesome-icon :icon="isMuted ? 'volume-mute' : 'volume-up'" /> Sound
+            <font-awesome-icon :icon="isMuted ? ['fas', 'volume-mute'] : ['fas', 'volume-up']" /> Sound
           </button>
           <button v-if="quizCompleted" @click="restartQuiz" class="btn btn-outline-primary">Restart</button>
         </div>
@@ -80,7 +80,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faVolumeUp, faVolumeMute } from '@fortawesome/free-solid-svg-icons';
 import 'animate.css';
+
+// Add icons to library
+library.add(faVolumeUp, faVolumeMute);
 // @ts-ignore
 import confetti from 'canvas-confetti';
 
@@ -104,12 +109,17 @@ const isMuted = ref(false);
 const animateCorrect = ref(false);
 const animateWrong = ref(false);
 
-// Sounds
+// Sounds - with error handling
 const correctSound = new Audio('/sounds/correct.mp3');
 const wrongSound = new Audio('/sounds/wrong.mp3');
-const bgMusic = new Audio('/sounds/bg.mp3');
 const happySound = new Audio('/sounds/happy.mp3');
-bgMusic.loop = true;
+
+// Add error handling for audio loading
+[correctSound, wrongSound, happySound].forEach(audio => {
+  audio.addEventListener('error', (e) => {
+    console.warn('Audio file failed to load:', audio.src);
+  });
+});
 
 const currentQuestion = computed(() => questions.value[currentIndex.value]);
 const progressText = computed(() => `Question ${currentIndex.value + 1} of ${questions.value.length}`);
@@ -131,11 +141,15 @@ function onDrop(bin: string) {
   if (isCorrect.value) {
     score.value++;
     animateCorrect.value = true;
-    if (!isMuted.value) correctSound.play();
+    if (!isMuted.value) {
+      correctSound.play().catch(e => console.warn('Could not play correct sound:', e));
+    }
     setTimeout(() => (animateCorrect.value = false), 1000);
   } else {
     animateWrong.value = true;
-    if (!isMuted.value) wrongSound.play();
+    if (!isMuted.value) {
+      wrongSound.play().catch(e => console.warn('Could not play wrong sound:', e));
+    }
     setTimeout(() => (animateWrong.value = false), 1000);
   }
 }
@@ -161,7 +175,9 @@ function completeQuiz() {
     origin: { y: 0.6 }
   });
 
-  if (!isMuted.value) happySound.play();
+  if (!isMuted.value) {
+    happySound.play().catch(e => console.warn('Could not play happy sound:', e));
+  }
 
   const name = prompt('Enter your name for the leaderboard:') || 'Player';
   const entry = { name, score: score.value };
@@ -185,11 +201,7 @@ function restartQuiz() {
 // Sound toggle
 function toggleMute() {
   isMuted.value = !isMuted.value;
-  if (isMuted.value) {
-    bgMusic.pause();
-  } else {
-    bgMusic.play();
-  }
+  // Background music removed as file doesn't exist
 }
 
 // Shuffle helper
@@ -201,10 +213,7 @@ function shuffleArray(array: any[]) {
 onMounted(() => {
   shuffleArray(questions.value);
   leaderboard.value = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-  // Start bg music on first click
-  document.body.addEventListener('click', () => {
-    if (!isMuted.value && bgMusic.paused) bgMusic.play();
-  }, { once: true });
+  // Background music removed as file doesn't exist
 });
 </script>
 
