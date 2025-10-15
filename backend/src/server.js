@@ -61,7 +61,7 @@ app.get("/api/today-safety", async (req, res) => {
       result.reduce((sum, row) => sum + (row.enterococci_level || 0), 0) / result.length;
 
     // 🎯 Add variation: avg - 40 to avg + 80
-    const simulated = avg + Math.round(Math.random() * 120 - 40);
+    const simulated = avg + Math.round(Math.random() * 90 - 40);
     const finalValue = Math.max(0, simulated); // avoid negative values
 
     res.json({
@@ -103,7 +103,7 @@ app.get("/api/predict", async (req, res) => {
       rows.reduce((sum, row) => sum + (row.enterococci_level || 0), 0) / rows.length;
 
     const predictions = Array.from({ length: 7 }, (_, i) => {
-      const predicted = avg + Math.round(Math.random() * 120 - 40);
+      const predicted = avg + Math.round(Math.random() * 80 - 40);
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + i);
       return {
@@ -118,7 +118,7 @@ app.get("/api/predict", async (req, res) => {
     console.error("/api/predict error:", err);
     // Fallback: generate simulated predictions when DB is unavailable
     const predictions = Array.from({ length: 7 }, (_, i) => {
-      const base = 40 + Math.round(Math.random() * 120);
+      const base = 40 + Math.round(Math.random() * 90);
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + i);
       return {

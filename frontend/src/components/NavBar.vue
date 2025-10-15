@@ -23,7 +23,7 @@
           @click="$router.push('/')"
           aria-label="Navigate to Home page"
         />
-        <Button 
+        <!-- <Button 
           label="Safety" 
           icon="pi pi-shield" 
           severity="secondary" 
@@ -31,7 +31,7 @@
           size="small"
           @click="$router.push('/safety')"
           aria-label="Navigate to Safety page"
-        />
+        /> -->
         <Button 
           label="ChildHub" 
           icon="pi pi-users" 
@@ -41,7 +41,18 @@
           @click="$router.push('/childhub')"
           aria-label="Navigate to ChildHub page"
         />
+
         <Button 
+  label="Beach Rating" 
+  icon="pi pi-star-fill" 
+  severity="secondary" 
+  outlined 
+  size="small"
+  @click="$router.push('/beach-rating')"
+  aria-label="Navigate to Beach Rating page"
+/>
+
+        <!-- <Button 
           label="Beach Info" 
           icon="pi pi-map" 
           severity="secondary" 
@@ -49,7 +60,7 @@
           size="small"
           @click="$router.push('/beach-info')"
           aria-label="Navigate to Beach Information page"
-        />
+        /> -->
       </div>
     </div>
   </nav>

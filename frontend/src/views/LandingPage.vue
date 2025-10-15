@@ -57,25 +57,32 @@
               />
 
               <!-- Water Quality Status -->
-              <div class="water-quality-status">
-                <h4>Water Quality Status</h4>
-                <div v-if="loadingWaterQuality" class="loading-state">
-                  <span>Loading water quality data...</span>
-                </div>
-                <div v-else-if="waterQualityError" class="error-state">
-                  <span class="error-text">{{ waterQualityError }}</span>
-                  <button @click="fetchWaterQualityData" class="retry-button">Retry</button>
-                </div>
-                <div v-else-if="waterQualityData" class="status-content">
-                  <div class="status-badge" :class="getStatusClass(waterQualityData.label)">
-                    {{ waterQualityData.label }}
-                  </div>
-                  <p class="status-reason">{{ waterQualityData.reason }}</p>
-                </div>
-                <div v-else class="no-data">
-                  <span>No water quality data available</span>
-                </div>
-              </div>
+<div class="water-quality-status">
+  <h4>Water Quality Status</h4>
+  <div v-if="loadingWaterQuality" class="loading-state">
+    <span>Loading water quality data...</span>
+  </div>
+  <div v-else-if="waterQualityError" class="error-state">
+    <span class="error-text">{{ waterQualityError }}</span>
+    <button @click="fetchWaterQualityData" class="retry-button">Retry</button>
+  </div>
+  <div v-else-if="waterQualityData" class="status-content">
+    <div class="status-badge" :class="getStatusClass(waterQualityData.label)">
+      {{ waterQualityData.label }}
+    </div>
+    <p class="status-reason">{{ waterQualityData.reason }}</p>
+
+    <div class="overall-rating" :class="getOverallClass(waterQualityData.label)">
+  <h5 class="overall-title">Overall Rating</h5>
+  <p class="overall-message">{{ waterQualityData.overallReason }}</p>
+</div>
+
+  </div>
+  <div v-else class="no-data">
+    <span>No water quality data available</span>
+  </div>
+</div>
+
             </div>
           </div>
         </div>
@@ -144,7 +151,9 @@ interface WaterQualityData {
   score: number
   label: 'Safe' | 'Moderate' | 'Dangerous' | 'Unknown'
   reason?: string
+  overallReason?: string
 }
+
 
 const beachOptions: Beach[] = [
   { id: 'dromana', name: 'Dromana Beach', lat: -38.3337, lon: 144.9658 },
@@ -241,11 +250,10 @@ const fetchWaterQualityData = async () => {
 
     const data = await response.json()
 
-    // Transform backend data format to match Safety page
+    // Determine status label and score
     let score: number
     let label: 'Safe' | 'Moderate' | 'Dangerous' | 'Unknown'
 
-    // Use the same logic as Safety page
     if (data.status === 'Safe') {
       score = 85
       label = 'Safe'
@@ -260,10 +268,24 @@ const fetchWaterQualityData = async () => {
       label = 'Unknown'
     }
 
+    // Add refined justifications based on overall rating logic
+    let overallReason = ''
+    if (label === 'Safe') {
+      overallReason = 'Forecast indicates favourable swimming conditions — Safe: Water quality is excellent, with bacteria levels within the safe threshold (≤ 35 orgs/100 mL).'
+    } else if (label === 'Moderate') {
+      overallReason = 'Forecast indicates cautionary swimming conditions — Moderate: Water quality shows slight contamination, with bacteria levels between 36 and 104 orgs/100 mL.'
+    } else if (label === 'Dangerous') {
+      overallReason = 'Forecast indicates hazardous swimming conditions — Dangerous: Swimming is not advised due to elevated bacteria levels exceeding 104 orgs/100 mL.'
+    } else {
+      overallReason = 'Unable to determine safety level — data currently unavailable.'
+    }
+
+    // Build transformed response
     const transformedData: WaterQualityData = {
       score,
       label,
-      reason: data.reason || 'Based on recent water quality measurements'
+      reason: data.reason || 'Based on recent water quality measurements',
+      overallReason
     }
 
     waterQualityData.value = transformedData
@@ -275,6 +297,7 @@ const fetchWaterQualityData = async () => {
   }
 }
 
+
 // Get status class for styling
 const getStatusClass = (label: string) => {
   switch (label) {
@@ -284,6 +307,21 @@ const getStatusClass = (label: string) => {
     default: return 'status-unknown'
   }
 }
+
+// Match overall rating color with main status badge
+const getOverallClass = (label: string) => {
+  switch (label) {
+    case 'Safe':
+      return 'overall-safe'
+    case 'Moderate':
+      return 'overall-moderate'
+    case 'Dangerous':
+      return 'overall-dangerous'
+    default:
+      return 'overall-unknown'
+  }
+}
+
 
 
 // Initialize
@@ -611,4 +649,67 @@ watch(selectedBeach, async (newBeach) => {
   }
   
 }
+
+
+.overall-rating {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  margin-top: 1rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.overall-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.overall-message {
+  font-size: 0.9rem;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Base container remains same */
+.overall-rating {
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  margin-top: 1rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+/* Green - Safe */
+.overall-safe {
+  background-color: #10e35a;
+  border-color: #11de59;
+  color: #166534;
+}
+
+/* Yellow - Moderate */
+.overall-moderate {
+  background-color: #f1d04a;
+  border-color: #e5c236;
+  color: #92400e;
+}
+
+/* Red - Dangerous */
+.overall-dangerous {
+  background-color: #edb3b3;
+  border-color: #dc0a0a;
+  color: #f11717;
+}
+
+/* Gray - Unknown */
+.overall-unknown {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
+
 </style>
