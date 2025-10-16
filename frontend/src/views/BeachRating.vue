@@ -1,17 +1,19 @@
 <template>
   <div class="container-fluid py-4 beach-rating-page">
     <div class="container">
-      <!-- ===== Header ===== -->
-      <div class="row align-items-center mb-3">
-        <div class="col">
-          <h2 class="text-white mb-0">{{ selectedBeach }}</h2>
+      <!-- ===== Main Content Container ===== -->
+      <div class="main-content-container">
+        <!-- ===== Header ===== -->
+        <div class="row align-items-center mb-3">
+          <div class="col">
+            <h2 class="page-title mb-0">{{ selectedBeach }}</h2>
+          </div>
+          <div class="col text-end">
+            <button class="btn btn-info" @click="showGuide = !showGuide">
+              {{ showGuide ? "Hide Guide" : "Open Guide" }}
+            </button>
+          </div>
         </div>
-        <div class="col text-end">
-          <button class="btn btn-info" @click="showGuide = !showGuide">
-            {{ showGuide ? "Hide Guide" : "Open Guide" }}
-          </button>
-        </div>
-      </div>
 <!-- ===== Guide Overlay (Updated Professional Version) ===== -->
 <div v-if="showGuide" class="guide-overlay" @click="showGuide = false">
   <div class="guide-content" @click.stop>
@@ -86,28 +88,34 @@
 </div>
 
 
-      <!-- ===== Selector + Ratings ===== -->
-      <div class="row mb-4 align-items-end gx-3">
-        <div class="col-md-4">
-          <label class="form-label fw-bold text-white">Select a Beach</label>
-          <select v-model="selectedBeach" class="form-select">
-            <option v-for="b in beachOptions" :key="b" :value="b">{{ b }}</option>
-          </select>
+        <!-- ===== Beach Selector ===== -->
+        <div class="beach-selector-wrapper mb-4">
+          <BeachSelector
+            :beaches="beachOptions"
+            @select="handleBeachSelect"
+            :selectedBeach="selectedBeachObject"
+            :lastUpdated="new Date()"
+          />
         </div>
 
-        <div class="col-md-4 text-center">
-          <h5 class="text-white mb-1">Overall Rating</h5>
-          <span class="badge fs-5" :class="overallBadgeClass">{{ overallRating }}</span>
-          <p class="text-white mt-2 mb-0">
-            <strong>Justification:</strong> {{ overallReason }}
-          </p>
-        </div>
+        <!-- ===== Ratings ===== -->
+        <div class="row mb-4 align-items-end gx-3">
+          <div class="col-md-6 text-center">
+            <h3 class="overall-rating-title mb-3">Overall Rating</h3>
+            <div class="overall-rating-badge" :class="overallBadgeClass">{{ overallRating }}</div>
+            <p class="rating-description mt-3 mb-0">
+              <strong>Justification:</strong> {{ overallReason }}
+            </p>
+          </div>
 
-        <div class="col-md-4 text-md-end">
-          <h5 class="text-white mb-1">Hazard Risk</h5>
-          <span class="badge fs-5" :class="hazardBadgeClass">{{ currentBeachData.rating }}/10</span>
+          <div class="col-md-6 text-center">
+            <h3 class="overall-rating-title mb-3">Hazard Risk</h3>
+            <div class="hazard-rating-badge" :class="hazardBadgeClass">{{ currentBeachData.rating }}/10</div>
+            <p class="rating-description mt-3 mb-0">
+              <strong>Risk Level:</strong> {{ hazardReason }}
+            </p>
+          </div>
         </div>
-      </div>
 
       <!-- ===== Predictions & Hazard side-by-side ===== -->
       <div class="row g-4 mb-4">
@@ -176,18 +184,19 @@
         </div>
       </div>
 
-      <!-- ===== Map with precise centering/zoom + legend ===== -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
-          <span>Beach Map</span>
-          <div class="small">
-            <span class="legend-dot bg-success me-1"></span>Safe
-            <span class="legend-dot bg-warning ms-3 me-1"></span>Moderate
-            <span class="legend-dot bg-danger ms-3 me-1"></span>Dangerous
+        <!-- ===== Map with precise centering/zoom + legend ===== -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+            <span>Beach Map</span>
+            <div class="small">
+              <span class="legend-dot bg-success me-1"></span>Safe
+              <span class="legend-dot bg-warning ms-3 me-1"></span>Moderate
+              <span class="legend-dot bg-danger ms-3 me-1"></span>Dangerous
+            </div>
           </div>
-        </div>
-        <div class="card-body p-0">
-          <div id="map" class="rounded-bottom" style="height:400px;"></div>
+          <div class="card-body p-0">
+            <div id="map" class="rounded-bottom" style="height:400px;"></div>
+          </div>
         </div>
       </div>
 
@@ -232,7 +241,6 @@
           <div class="mt-3 small">
             <span class="badge bg-success me-2">Green</span>Available
             <span class="badge bg-danger mx-2">Red</span>Not Available
-            <span class="badge bg-secondary mx-2">Number</span>Count / Risk Rating
           </div>
         </div>
       </div>
@@ -245,6 +253,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import axios from "axios";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import BeachSelector from '@/components/BeachSelector.vue';
 
 /* -------------------- Accurate coordinates (from your working code) -------------------- */
 const beachCoords: Record<string, { lat: number; lng: number }> = {
@@ -328,12 +337,27 @@ const predictionsError = ref<string>("");
 
 const map = ref<L.Map | null>(null);
 const markers = ref<Record<string, L.CircleMarker>>({});
-const statusByBeach = ref<Record<string, "Safe" | "Moderate" | "Dangerous">>({}); // today’s status per beach (if available)
+const statusByBeach = ref<Record<string, "Safe" | "Moderate" | "Dangerous">>({}); // today's status per beach (if available)
 
 /* -------------------- Computed -------------------- */
-const beachOptions = Object.keys(beachData);
+const beachOptions = [
+  { id: 'dromana', name: 'Dromana Beach', lat: -38.3319, lon: 144.9649 },
+  { id: 'carrum', name: 'Carrum Beach', lat: -38.0765, lon: 145.1205 },
+  { id: 'stkilda', name: 'St Kilda Beach', lat: -37.8679, lon: 144.9740 },
+  { id: 'portmelbourne', name: 'Port Melbourne Beach', lat: -37.8470, lon: 144.9455 },
+  { id: 'altona', name: 'Altona Beach', lat: -37.8710, lon: 144.8300 }
+];
+
+const selectedBeachObject = computed(() => {
+  return beachOptions.find(beach => beach.name === selectedBeach.value) || beachOptions[0];
+});
 
 const currentBeachData = computed(() => beachData[selectedBeach.value]);
+
+/* -------------------- Methods -------------------- */
+const handleBeachSelect = (beach: any) => {
+  selectedBeach.value = beach.name;
+};
 
 const hazardTier = computed(() => { // 1=safe,2=moderate,3=dangerous
   const r = currentBeachData.value.rating;
@@ -569,9 +593,130 @@ const formatDate = (d: string) =>
 
 <style scoped>
 .beach-rating-page {
-  background: linear-gradient(180deg, #0d6efd, #20c997);
+  background-image: url('@/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   min-height: 100vh;
   padding-bottom: 3rem;
+}
+
+/* Main Content Container */
+.main-content-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Text colors for main content container */
+.page-title {
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.selector-label {
+  color: #374151;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.rating-title {
+  color: #374151;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.rating-description {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Overall Rating - Large */
+.overall-rating-title {
+  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.overall-rating-badge {
+  display: inline-block;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.overall-rating-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.overall-rating-badge.bg-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.overall-rating-badge.bg-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.overall-rating-badge.bg-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+/* Hazard Rating - Same style as Overall Rating */
+.hazard-rating-badge {
+  display: inline-block;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.hazard-rating-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.hazard-rating-badge.bg-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.hazard-rating-badge.bg-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.hazard-rating-badge.bg-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
 }
 
 /* equal height scrollable boxes */
