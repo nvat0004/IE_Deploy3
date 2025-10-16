@@ -349,6 +349,7 @@ const currentBeachData = computed(() => beachData[selectedBeach.value]);
 /* -------------------- Methods -------------------- */
 const handleBeachSelect = (beach: any) => {
   selectedBeach.value = beach.name;
+  try { localStorage.setItem('selectedBeachName', beach.name) } catch {}
 };
 
 const hazardTier = computed(() => { // 1=safe,2=moderate,3=dangerous
@@ -536,6 +537,10 @@ const fetchTodayForAll = async () => {
 
 /* -------------------- Lifecycle -------------------- */
 onMounted(async () => {
+  const savedName = (() => { try { return localStorage.getItem('selectedBeachName') || '' } catch { return '' } })()
+  if (savedName && beachOptions.some(b => b.name === savedName)) {
+    selectedBeach.value = savedName
+  }
   initMap();
   await fetchTodayForAll(); // colors map using live status if available
   await fetchPredictions(); // fills predictions + adjusts selected marker

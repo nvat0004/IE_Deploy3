@@ -210,6 +210,7 @@ const features = [
 // Interaction flow: onSelect(beach) → update selectedBeach → MiniMap auto flyTo → call fetchWeatherPack → update UV/Weather cards; async request backend prediction, update Water Quality card
 const handleBeachSelect = async (beach: Beach) => {
   selectedBeach.value = beach
+  try { localStorage.setItem('selectedBeachName', beach.name) } catch {}
   await fetchWeatherData()
   await fetchWaterQualityData()
 }
@@ -326,7 +327,11 @@ const getOverallClass = (label: string) => {
 
 // Initialize
 onMounted(() => {
-  if (beachOptions.length > 0) {
+  const savedName = (() => { try { return localStorage.getItem('selectedBeachName') || '' } catch { return '' } })()
+  const saved = beachOptions.find(b => b.name === savedName)
+  if (saved) {
+    selectedBeach.value = saved
+  } else if (beachOptions.length > 0) {
     selectedBeach.value = beachOptions[0]
   }
 })
