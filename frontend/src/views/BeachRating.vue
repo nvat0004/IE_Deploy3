@@ -8,7 +8,6 @@
         </div>
         <div class="col text-end">
           <button class="btn btn-info" @click="showGuide = !showGuide">
-            <i class="fas fa-info-circle me-1"></i>
             {{ showGuide ? "Hide Guide" : "Open Guide" }}
           </button>
         </div>
@@ -34,11 +33,11 @@
 
       <ul class="guide-list">
         <li>
-          <strong>Beach Risk Rating</strong> – calculated based on real-time marine conditions such as wave height,
+          <strong>Beach Risk Rating</strong> - calculated based on real-time marine conditions such as wave height,
           rip currents, and current strength, as well as natural hazards and features like sharks, rocks, and bluebottles.
         </li>
         <li>
-          <strong>Water Quality (Enterococci Levels)</strong> – swimming safety is monitored through Enterococci bacteria,
+          <strong>Water Quality (Enterococci Levels)</strong> - swimming safety is monitored through Enterococci bacteria,
           a key indicator of faecal contamination and overall water quality.
         </li>
       </ul>
@@ -49,31 +48,31 @@
       </p>
 
       <ul class="guide-list">
-        <li>✅ <strong>0–35 organisms/100 mL</strong>: Safe for swimming</li>
-        <li>⚠️ <strong>36–104 organisms/100 mL</strong>: Moderately safe</li>
-        <li>❌ <strong>105+ organisms/100 mL</strong>: Unsafe – avoid contact</li>
+        <li>✅<strong>0-35 organisms/100 mL</strong>: Safe for swimming</li>
+        <li>⚠️<strong>36-104 organisms/100 mL</strong>: Moderately safe</li>
+        <li>❌<strong>105+ organisms/100 mL</strong>: Unsafe - avoid contact</li>
       </ul>
 
       <h5 class="fw-bold text-primary mt-4">Use the Interactive Tools Below!</h5>
       <ul class="guide-list">
         <li>
-          <strong>Select a Beach from the Dropdown List</strong> – view live safety data, natural features,
+          <strong>Select a Beach from the Dropdown List</strong> - view live safety data, natural features,
           and facilities for your chosen beach instantly.
         </li>
         <li>
-          <strong>Check Current and Upcoming Beach Safety</strong> – instantly see whether the water at a beach
+          <strong>Check Current and Upcoming Beach Safety</strong> - instantly see whether the water at a beach
           is Safe, Moderate, or Dangerous for swimming today, and plan ahead with a 7-day predicted water quality forecast.
         </li>
         <li>
-          <strong>Check Beach Risk Rating</strong> – view each beach’s risk score (1–10), calculated from real-time
+          <strong>Check Beach Risk Rating</strong> - view each beach's risk score (1-10), calculated from real-time
           marine data and environmental features like wave patterns, beach type, and presence of hazards.
         </li>
         <li>
-          <strong>Use the Interactive Safety Map</strong> – all beaches appear on a real-time color-coded map:
-          🟢 <span class="text-success">Safe</span>, 🟠 <span class="text-warning">Moderate</span>, 🔴 <span class="text-danger">Dangerous</span>.
+          <strong>Use the Interactive Safety Map</strong> - all beaches appear on a real-time color-coded map:
+          <span class="text-success">Safe</span>, <span class="text-warning">Moderate</span>, <span class="text-danger">Dangerous</span>.
         </li>
         <li>
-          <strong>Available Facilities</strong> – explore amenities such as toilets, showers, barbecues, shelters,
+          <strong>Available Facilities</strong> - explore amenities such as toilets, showers, barbecues, shelters,
           picnic areas, playgrounds, shops, and parking at your selected beach.
         </li>
       </ul>
@@ -158,7 +157,6 @@
             <div class="card-header bg-dark text-white fw-bold">Key Hazard Factors</div>
             <div class="card-body overflow-auto equal-box">
               <h5 class="mb-3">
-                <i class="fas fa-exclamation-triangle me-2"></i>
                 Hazard Rating:
                 <span class="badge" :class="hazardBadgeClass">{{ currentBeachData.rating }}/10</span>
               </h5>
@@ -383,27 +381,27 @@ const overallBadgeClass = computed(() =>
 const overallReason = computed(() => {
   const pred = predictions.value?.[0];
 
-  // 🟥 Dangerous case (prediction dominates)
+  // Dangerous case (prediction dominates)
   if (predTier.value > hazardTier.value && pred?.status === "Dangerous") {
     return "Forecast indicates hazardous swimming conditions — Dangerous: Swimming is not advised due to elevated bacteria levels exceeding 104 orgs/100 mL.";
   }
 
-  // 🟨 Moderate case (prediction dominates)
+  // Moderate case (prediction dominates)
   if (predTier.value > hazardTier.value && pred?.status === "Moderate") {
     return "Forecast indicates cautionary swimming conditions — Moderate: Water quality shows slight contamination, with bacteria levels between 36 and 104 orgs/100 mL.";
   }
 
-  // 🟩 Safe case (prediction dominates)
+  // Safe case (prediction dominates)
   if (predTier.value > hazardTier.value && pred?.status === "Safe") {
     return "Forecast indicates favourable swimming conditions — Safe: Water quality is excellent, with bacteria levels within the safe threshold (≤ 35 orgs/100 mL).";
   }
 
-  // 🧭 When hazard rating dominates (no prediction or equal risk)
+  // When hazard rating dominates (no prediction or equal risk)
   if (hazardTier.value >= (predTier.value || 0)) {
     return hazardReason.value;
   }
 
-  // 🟦 When both are equal
+  // When both are equal
   if (pred && predTier.value === hazardTier.value) {
     return `${hazardReason.value} (prediction also ${pred.status.toLowerCase()}).`;
   }
@@ -451,17 +449,17 @@ const isCountValue = (key: string) => {
 };
 
 const initMap = () => {
-  // 🗺️ Initialize the map slightly north to show both beach + coastline clearly
+  // Initialize the map slightly north to show both beach + coastline clearly
   const initial = beachCoords[selectedBeach.value] || { lat: -37.9, lng: 145.0 };
   map.value = L.map("map").setView([initial.lat - 0.001, initial.lng], 9);
 
-  // 🌊 Use a beach-friendly tile layer for better coastal contour and terrain
+  // Use a beach-friendly tile layer for better coastal contour and terrain
   L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
     maxZoom: 18,
     attribution: "© OpenStreetMap contributors, © OpenTopoMap",
   }).addTo(map.value!);
 
-  // 📍 Add markers for all beaches
+  // Add markers for all beaches
   for (const [name, b] of Object.entries(beachData)) {
     const color = tierToColor(hazardTierFromRating(b.rating));
     const m = L.circleMarker([b.lat, b.lng], {
@@ -478,10 +476,10 @@ const initMap = () => {
     markers.value[name] = m;
   }
 
-  // 🎯 Center map precisely on current selection with offset
+  // Center map precisely on current selection with offset
   centerOnSelected(14);
 
-  // 🧭 Keep the beach centered when window is resized
+  // Keep the beach centered when window is resized
   window.addEventListener("resize", () => {
     centerOnSelected(14);
   });
