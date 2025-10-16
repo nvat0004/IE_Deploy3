@@ -99,20 +99,12 @@
         </div>
 
         <!-- ===== Ratings ===== -->
-        <div class="row mb-4 align-items-end gx-3">
-          <div class="col-md-6 text-center">
+        <div class="row mb-4 align-items-end gx-3 justify-content-center">
+          <div class="col-auto text-center">
             <h3 class="overall-rating-title mb-3">Overall Rating</h3>
             <div class="overall-rating-badge" :class="overallBadgeClass">{{ overallRating }}</div>
             <p class="rating-description mt-3 mb-0">
-              <strong>Justification:</strong> {{ overallReason }}
-            </p>
-          </div>
-
-          <div class="col-md-6 text-center">
-            <h3 class="overall-rating-title mb-3">Hazard Risk</h3>
-            <div class="hazard-rating-badge" :class="hazardBadgeClass">{{ currentBeachData.rating }}/10</div>
-            <p class="rating-description mt-3 mb-0">
-              <strong>Risk Level:</strong> {{ hazardReason }}
+              <strong>Justification:</strong> The Overall Rating reflects the highest risk between current hazard conditions and water quality predictions, ensuring users receive the most cautious and protective safety guidance.
             </p>
           </div>
         </div>
@@ -174,8 +166,8 @@
               </p>
               <hr />
               <div class="row">
-                <div v-for="(value, key) in displayableHazardFields" :key="key" class="col-md-6 mb-2">
-                  <strong>{{ formatKey(key) }}:</strong> {{ value || "N/A" }}
+                <div v-for="(value, key) in displayableHazardFields" :key="String(key)" class="col-md-6 mb-2">
+                  <strong>{{ formatKey(String(key)) }}:</strong> {{ value || "N/A" }}
                   <div class="small text-light">{{ explanations[key] || "" }}</div>
                 </div>
               </div>
@@ -194,7 +186,7 @@
               <span class="legend-dot bg-danger ms-3 me-1"></span>Dangerous
             </div>
           </div>
-          <div class="card-body p-0">
+            <div class="card-body p-0">
             <div id="map" class="rounded-bottom" style="height:400px;"></div>
           </div>
         </div>
@@ -401,37 +393,7 @@ const overallBadgeClass = computed(() =>
   overallRating.value === "Moderate" ? "bg-warning text-dark" : "bg-success"
 );
 
-// Clear justification explaining which signal dominates
-const overallReason = computed(() => {
-  const pred = predictions.value?.[0];
-
-  // Dangerous case (prediction dominates)
-  if (predTier.value > hazardTier.value && pred?.status === "Dangerous") {
-    return "Forecast indicates hazardous swimming conditions — Dangerous: Swimming is not advised due to elevated bacteria levels exceeding 104 orgs/100 mL.";
-  }
-
-  // Moderate case (prediction dominates)
-  if (predTier.value > hazardTier.value && pred?.status === "Moderate") {
-    return "Forecast indicates cautionary swimming conditions — Moderate: Water quality shows slight contamination, with bacteria levels between 36 and 104 orgs/100 mL.";
-  }
-
-  // Safe case (prediction dominates)
-  if (predTier.value > hazardTier.value && pred?.status === "Safe") {
-    return "Forecast indicates favourable swimming conditions — Safe: Water quality is excellent, with bacteria levels within the safe threshold (≤ 35 orgs/100 mL).";
-  }
-
-  // When hazard rating dominates (no prediction or equal risk)
-  if (hazardTier.value >= (predTier.value || 0)) {
-    return hazardReason.value;
-  }
-
-  // When both are equal
-  if (pred && predTier.value === hazardTier.value) {
-    return `${hazardReason.value} (prediction also ${pred.status.toLowerCase()}).`;
-  }
-
-  return hazardReason.value;
-});
+// overallReason removed; justification is now a fixed explanatory sentence in the template
 
 /* -------------------- Hazard Explanations + Fields -------------------- */
 const explanations: Record<string, string> = {
@@ -481,7 +443,7 @@ const initMap = () => {
   L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
     maxZoom: 18,
     attribution: "© OpenStreetMap contributors, © OpenTopoMap",
-  }).addTo(map.value!);
+  }).addTo(map.value as any);
 
   // Add markers for all beaches
   for (const [name, b] of Object.entries(beachData)) {
@@ -493,7 +455,7 @@ const initMap = () => {
       weight: 1,
       fillOpacity: 0.85,
     })
-      .addTo(map.value!)
+      .addTo(map.value as any)
       .bindPopup(`<b>${name}</b>`)
       .on("click", () => (selectedBeach.value = name));
 
@@ -501,11 +463,11 @@ const initMap = () => {
   }
 
   // Center map precisely on current selection with offset
-  centerOnSelected(14);
+  centerOnSelected();
 
   // Keep the beach centered when window is resized
   window.addEventListener("resize", () => {
-    centerOnSelected(14);
+    centerOnSelected();
   });
 };
 
@@ -513,7 +475,7 @@ const initMap = () => {
 const tierToColor = (t: number) => (t === 3 ? "red" : t === 2 ? "orange" : "green");
 const hazardTierFromRating = (r: number) => (r >= 7 ? 3 : r >= 4 ? 2 : 1);
 
-const centerOnSelected = (zoom = 14) => {
+const centerOnSelected = () => {
   const c = beachCoords[selectedBeach.value];
   if (map.value && c) {
     // Slightly offset the latitude upward so the beach + sea are both visible
@@ -558,11 +520,11 @@ const fetchPredictions = async () => {
 const fetchTodayForAll = async () => {
   const results: Record<string, "Safe" | "Moderate" | "Dangerous"> = {};
   await Promise.all(
-    beachOptions.map(async (name) => {
+    beachOptions.map(async (b) => {
       try {
-        const r = await axios.get(`/api/today-safety?beach=${encodeURIComponent(name)}`);
+        const r = await axios.get(`/api/today-safety?beach=${encodeURIComponent(b.name)}`);
         const s = r.data?.status as "Safe" | "Moderate" | "Dangerous";
-        if (s) results[name] = s;
+        if (s) results[b.name] = s;
       } catch {
         /* ignore; fallback to hazard */
       }
@@ -577,11 +539,11 @@ onMounted(async () => {
   initMap();
   await fetchTodayForAll(); // colors map using live status if available
   await fetchPredictions(); // fills predictions + adjusts selected marker
-  centerOnSelected(14);
+  centerOnSelected();
 });
 
 watch(selectedBeach, async () => {
-  centerOnSelected(14);
+  centerOnSelected();
   await fetchPredictions();
 });
 
@@ -684,40 +646,7 @@ const formatDate = (d: string) =>
   color: white;
 }
 
-/* Hazard Rating - Same style as Overall Rating */
-.hazard-rating-badge {
-  display: inline-block;
-  padding: 1rem 2rem;
-  border-radius: 16px;
-  font-weight: 800;
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  min-width: 200px;
-}
 
-.hazard-rating-badge:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-}
-
-.hazard-rating-badge.bg-success {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-}
-
-.hazard-rating-badge.bg-warning {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-}
-
-.hazard-rating-badge.bg-danger {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-}
 
 /* equal height scrollable boxes */
 .equal-box { max-height: 420px; }
