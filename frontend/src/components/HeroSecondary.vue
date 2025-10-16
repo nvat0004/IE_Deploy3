@@ -31,7 +31,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 
-const props = defineProps<{
+defineProps<{
   title: string
   subtitle: string
   imgSrc: string
