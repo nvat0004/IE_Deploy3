@@ -10,12 +10,25 @@
       />
     </div>
     <div class="hero-secondary-image-wrapper">
-      <img :src="imgSrc" :alt="title" class="hero-secondary-image" />
+      <div class="image-carousel">
+        <div class="carousel-container">
+          <img 
+            v-for="(image, index) in images" 
+            :key="index"
+            :src="image" 
+            :alt="`Beach Activity ${index + 1}`" 
+            class="hero-secondary-image"
+            :class="{ 'active': currentImageIndex === index }"
+          />
+        </div>
+      </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 
 const props = defineProps<{
@@ -24,12 +37,42 @@ const props = defineProps<{
   imgSrc: string
 }>()
 
-const scrollToContent = () => {
-  const contentSection = document.getElementById('content')
-  if (contentSection) {
-    contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+// Import images
+const imageModules = import.meta.glob('@/assets/landingpage/*.jpg', { eager: true })
+const images = Object.values(imageModules).map((module: any) => module.default)
+
+const currentImageIndex = ref(0)
+let carouselInterval: number | null = null
+
+const nextSlide = () => {
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.length
+}
+
+
+const startCarousel = () => {
+  carouselInterval = setInterval(nextSlide, 4000)
+}
+
+const stopCarousel = () => {
+  if (carouselInterval) {
+    clearInterval(carouselInterval)
+    carouselInterval = null
   }
 }
+
+const router = useRouter()
+
+const scrollToContent = () => {
+  router.push('/beach-rating')
+}
+
+onMounted(() => {
+  startCarousel()
+})
+
+onUnmounted(() => {
+  stopCarousel()
+})
 </script>
 
 <style scoped>
@@ -103,10 +146,34 @@ const scrollToContent = () => {
   max-width: 500px;
 }
 
-.hero-secondary-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+.image-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
 }
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.hero-secondary-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.hero-secondary-image.active {
+  opacity: 1;
+}
+
 </style>

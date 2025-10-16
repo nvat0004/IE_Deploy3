@@ -7,7 +7,7 @@
     <HeroSecondary
       title="Real-Time Beach Safety"
       subtitle="Get instant water quality updates and weather forecasts for Melbourne's beaches. Stay informed, stay safe."
-      imgSrc="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop&crop=center"
+      imgSrc=""
     />
 
     <!-- Main Content Section -->

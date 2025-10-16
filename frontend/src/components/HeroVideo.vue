@@ -28,64 +28,16 @@
           <p class="hero-subtitle">
             Real-time water quality updates for Melbourne's Beaches
           </p>
-          
-          <!-- CTA Button using PrimeVue Button
-          <Button
-            @click="scrollToDashboard"
-            label="Get Started"
-            class="hero-button"
-            size="large"
-          /> -->
         </div>
       </template>
     </Card>
 
-    <!-- Scroll Down Arrow using PrimeVue Button -->
-    <Button
-      @click="scrollToDashboard"
-      icon="pi pi-arrow-down"
-      class="hero-scroll-button"
-      text
-      rounded
-      size="large"
-      aria-label="Scroll to dashboard"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-// import type { Ref } from 'vue'
 import Card from 'primevue/card'
-import Button from 'primevue/button'
 
-const props = defineProps<{
-  dashboardRef: any
-  featuresRef?: any
-}>()
-
-const scrollToDashboard = () => {
-  // Features
-  if (props.dashboardRef?.value) {
-    props.dashboardRef.value.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    })
-  } else if (props.featuresRef?.value) {
-    props.featuresRef.value.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    })
-  }
-}
-
-// const scrollToFeatures = () => {
-//   if (props.featuresRef?.value) {
-//     props.featuresRef.value.scrollIntoView({ 
-//       behavior: 'smooth',
-//       block: 'start'
-//     })
-//   }
-// }
 </script>
 
 <style scoped>
@@ -201,33 +153,6 @@ const scrollToDashboard = () => {
   transition: transform 0.2s ease !important;
 }
 
-.hero-scroll-button {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  color: white !important;
-  font-size: 1.2rem !important;
-  animation: bounce 2s infinite;
-}
-
-.hero-scroll-button:hover {
-  transform: translateX(-50%) scale(1.1) !important;
-  transition: transform 0.2s ease !important;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  40% {
-    transform: translateX(-50%) translateY(-10px);
-  }
-  60% {
-    transform: translateX(-50%) translateY(-5px);
-  }
-}
 
 
 @media (max-width: 768px) {
@@ -266,10 +191,6 @@ const scrollToDashboard = () => {
     font-size: 0.85rem !important;
   }
   
-  .hero-scroll-button {
-    font-size: 1rem !important;
-    bottom: 0.5rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -308,10 +229,6 @@ const scrollToDashboard = () => {
     font-size: 0.8rem !important;
   }
   
-  .hero-scroll-button {
-    font-size: 0.9rem !important;
-    bottom: 0.3rem;
-  }
 }
 
 
@@ -331,8 +248,5 @@ const scrollToDashboard = () => {
     font-size: 0.9rem !important;
   }
   
-  .hero-scroll-button {
-    bottom: 1rem;
-  }
 }
 </style>
