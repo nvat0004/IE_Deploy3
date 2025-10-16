@@ -172,7 +172,7 @@ const beachData = {
     barbique: 'Yes', picnic: 'Yes', shades: 'Yes', shelter: 'Yes', playground: 'Yes', phonecharging: 'Yes'
   },
   'St Kilda Beach': {
-    lat: -37.8675, lng: 144.9730,
+    lat: -37.8679, lng: 144.9740,
     // Hazard data
     wave_height: '0.4', rip_current_count: '7', beach_type: 'LTT - TBR', current_strength: 'Moderate',
     shore_break: 'Moderate', wave_type: 'Choppy', dominant_swell_direction: 'Southwest', mean_wave_period: '5',  

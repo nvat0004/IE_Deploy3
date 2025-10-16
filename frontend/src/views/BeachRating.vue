@@ -251,7 +251,7 @@ import "leaflet/dist/leaflet.css";
 /* -------------------- Accurate coordinates (from your working code) -------------------- */
 const beachCoords: Record<string, { lat: number; lng: number }> = {
   "Carrum Beach": { lat: -38.07586976390836, lng: 145.12064080966894 },
-  "St Kilda Beach": { lat: -37.8675, lng: 144.9731 },
+  "St Kilda Beach": { lat: -37.8679, lng: 144.9740 },
   "Dromana Beach": { lat: -38.33018662094219, lng: 144.9645389732838 },
   "Port Melbourne Beach": { lat: -37.846462248390225, lng: 144.94543732576963 },
   "Altona Beach": { lat: -37.87069961874303, lng: 144.82995078528268 },

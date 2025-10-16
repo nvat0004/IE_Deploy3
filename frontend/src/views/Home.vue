@@ -138,10 +138,10 @@ const featuresRef = ref<HTMLElement | null>(null);
 
 const beaches = [
   { name: 'Carrum Beach', lat: -38.0652, lon: 145.1214 },
-  { name: 'St Kilda Beach', lat: -37.8675, lon: 144.9731 },
-  { name: 'Dromana Beach', lat: -38.3337, lon: 144.9658 },
-  { name: 'Port Melbourne Beach', lat: -37.8399, lon: 144.939 },
-  { name: 'Altona Beach', lat: -37.8686, lon: 144.8297 },
+  { name: 'St Kilda Beach', lat: -37.8679, lon: 144.9740 },
+  { name: 'Dromana Beach', lat: -38.3319, lon: 144.9649 },
+  { name: 'Port Melbourne Beach', lat: -37.8470, lon: 144.9455 },
+  { name: 'Altona Beach', lat: -37.8710, lon: 144.8300 },
 ];
 
 const selectedWeatherBeach = ref(beaches[0]);

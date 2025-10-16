@@ -156,11 +156,11 @@ interface WaterQualityData {
 
 
 const beachOptions: Beach[] = [
-  { id: 'dromana', name: 'Dromana Beach', lat: -38.3337, lon: 144.9658 },
-  { id: 'carrum', name: 'Carrum Beach', lat: -38.0786, lon: 145.1214 },
-  { id: 'stkilda', name: 'St Kilda Beach', lat: -37.8675, lon: 144.9731 },
-  { id: 'portmelbourne', name: 'Port Melbourne Beach', lat: -37.8399, lon: 144.939 },
-  { id: 'altona', name: 'Altona Beach', lat: -37.8686, lon: 144.8297 }
+  { id: 'dromana', name: 'Dromana Beach', lat: -38.3319, lon: 144.9649 },
+  { id: 'carrum', name: 'Carrum Beach', lat: -38.0765, lon: 145.1205 },
+  { id: 'stkilda', name: 'St Kilda Beach', lat: -37.8679, lon: 144.9740 },
+  { id: 'portmelbourne', name: 'Port Melbourne Beach', lat: -37.8470, lon: 144.9455 },
+  { id: 'altona', name: 'Altona Beach', lat: -37.8710, lon: 144.8300 }
 ]
 
 const selectedBeach = ref<Beach | null>(null)

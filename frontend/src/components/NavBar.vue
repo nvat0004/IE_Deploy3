@@ -10,7 +10,7 @@
           class="brand-logo"
           aria-label="Logo"
         />
-        <span class="brand-text">Safe Water & Sanitisation Insights</span>
+        <span class="brand-text">Beach Protector</span>
       </div>
       
       <div class="navbar-actions">

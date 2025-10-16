@@ -201,10 +201,10 @@ const predictionsError = ref<string | null>(null);
 
 const beachOptions = [
   { name: "Carrum Beach", lat: -38.0652, lng: 145.1214 },
-  { name: "St Kilda Beach", lat: -37.8675, lng: 144.9731 },
-  { name: "Dromana Beach", lat: -38.3337, lng: 144.9658 },
-  { name: "Port Melbourne Beach", lat: -37.8399, lng: 144.939 },
-  { name: "Altona Beach", lat: -37.8686, lng: 144.8297 },
+  { name: "St Kilda Beach", lat: -37.8679, lng: 144.9740 },
+  { name: "Dromana Beach", lat: -38.3319, lng: 144.9649 },
+  { name: "Port Melbourne Beach", lat: -37.8470, lng: 144.9455 },
+  { name: "Altona Beach", lat: -37.8710, lng: 144.8300 },
 ];
 
 const formattedDate = computed(() => {

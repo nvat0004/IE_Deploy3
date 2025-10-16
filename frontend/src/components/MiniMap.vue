@@ -86,11 +86,11 @@ const error = ref<string | null>(null)
 
 // Beach data with different radius for each beach
 const beachData = [
-  { id: 'dromana', name: 'Dromana Beach', lat: -38.3333, lon: 144.9667, radius: 500 },
-  { id: 'carrum', name: 'Carrum Beach', lat: -38.0786, lon: 145.1214, radius: 400 },
-  { id: 'stkilda', name: 'St Kilda Beach', lat: -37.8675, lon: 144.9731, radius: 600 },
-  { id: 'portmelbourne', name: 'Port Melbourne Beach', lat: -37.8399, lon: 144.939, radius: 450 },
-  { id: 'altona', name: 'Altona Beach', lat: -37.8686, lon: 144.8297, radius: 550 }
+  { id: 'dromana', name: 'Dromana Beach', lat: -38.3319, lon: 144.9649, radius: 500 },
+  { id: 'carrum', name: 'Carrum Beach', lat: -38.0765, lon: 145.1205, radius: 400 },
+  { id: 'stkilda', name: 'St Kilda Beach', lat: -37.8679, lon: 144.9740, radius: 600 },
+  { id: 'portmelbourne', name: 'Port Melbourne Beach', lat: -37.8470, lon: 144.9455, radius: 450 },
+  { id: 'altona', name: 'Altona Beach', lat: -37.8710, lon: 144.8300, radius: 550 }
 ]
 
 // Fix for default markers in Leaflet
