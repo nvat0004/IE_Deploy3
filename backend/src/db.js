@@ -19,11 +19,11 @@ export const pool = mysql.createPool({
 (async () => {
   try {
     const conn = await pool.getConnection();
-    console.log("✅ MySQL connected!");
+    console.log("MySQL connected!");
     conn.release();
   } catch (err) {
-    console.error("❌ MySQL connection failed:");
-    console.error(err); // ✅ Log full error, not just message
+    console.error("MySQL connection failed:");
+    console.error(err); // Log full error, not just message
     process.exit(1);
   }
 })();

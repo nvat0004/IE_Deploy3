@@ -1,5 +1,5 @@
 
-// ✅ server.js — ES Module Compatible
+// server.js — ES Module Compatible
 import express from "express";
 import mysql from "mysql2/promise";
 import cors from "cors";
@@ -38,7 +38,7 @@ function getReason(value) {
   return "Dangerous — Swimming not advised (Bacteria level >104)";
 }
 
-// ✅ Today's Swimming Safety — now with variation for demo
+// Today's Swimming Safety — now with variation for demo
 app.get("/api/today-safety", async (req, res) => {
   try {
     const site = req.query.beach || "Frankston Beach";
@@ -60,7 +60,7 @@ app.get("/api/today-safety", async (req, res) => {
     const avg =
       result.reduce((sum, row) => sum + (row.enterococci_level || 0), 0) / result.length;
 
-    // 🎯 Add variation: avg - 40 to avg + 80
+    // Add variation: avg - 40 to avg + 80
     const simulated = avg + Math.round(Math.random() * 90 - 40);
     const finalValue = Math.max(0, simulated); // avoid negative values
 
@@ -82,7 +82,7 @@ app.get("/api/today-safety", async (req, res) => {
   }
 });
 
-// ✅ 7-Day Prediction (unchanged)
+// 7-Day Prediction (unchanged)
 app.get("/api/predict", async (req, res) => {
   try {
     const site = req.query.beach || "Frankston Beach";
@@ -132,7 +132,7 @@ app.get("/api/predict", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`✅ Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
 
 // Serve frontend build (SPA) — after API routes

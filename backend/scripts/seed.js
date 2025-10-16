@@ -6,7 +6,7 @@ import mysql from "mysql2/promise";
 import fs from "fs";
 import csv from "csv-parser";
 
-// ✅ Create connection pool using .env
+// Create connection pool using .env
 const pool = await mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -17,7 +17,7 @@ const pool = await mysql.createPool({
   connectionLimit: 10,
 });
 
-// ✅ Ensure tables with correct schema
+// Ensure tables with correct schema
 async function ensureTables() {
   const conn = await pool.getConnection();
 
@@ -60,10 +60,10 @@ async function ensureTables() {
   `);
 
   conn.release();
-  console.log("✅ Tables dropped and recreated successfully");
+  console.log("Tables dropped and recreated successfully");
 }
 
-// ✅ CSV loader
+// CSV loader
 async function loadCSV(filename) {
   const results = [];
   return new Promise((resolve, reject) => {
@@ -75,7 +75,7 @@ async function loadCSV(filename) {
   });
 }
 
-// ✅ Insert water_quality
+// Insert water_quality
 async function insertWaterQuality() {
   const conn = await pool.getConnection();
   const data = await loadCSV("./datasets/water_quality_cleaned.csv");
@@ -95,10 +95,10 @@ async function insertWaterQuality() {
   }
 
   conn.release();
-  console.log(`✅ water_quality: inserted ${data.length} rows`);
+  console.log(` water_quality: inserted ${data.length} rows`);
 }
 
-// ✅ Insert enterococci
+// Insert enterococci
 async function insertEnterococci() {
   const conn = await pool.getConnection();
   const data = await loadCSV("./datasets/enterococci_cleaned.csv");
@@ -111,10 +111,10 @@ async function insertEnterococci() {
   }
 
   conn.release();
-  console.log(`✅ enterococci: inserted ${data.length} rows`);
+  console.log(`enterococci: inserted ${data.length} rows`);
 }
 
-// ✅ Insert daily_rainfall
+// Insert daily_rainfall
 async function insertRainfall() {
   const conn = await pool.getConnection();
   const data = await loadCSV("./datasets/daily_rainfall_cleaned.csv");
@@ -127,10 +127,10 @@ async function insertRainfall() {
   }
 
   conn.release();
-  console.log(`✅ daily_rainfall: inserted ${data.length} rows`);
+  console.log(`daily_rainfall: inserted ${data.length} rows`);
 }
 
-// ✅ Main function
+// Main function
 async function main() {
   try {
     await ensureTables();
@@ -138,10 +138,10 @@ async function main() {
     await insertEnterococci();
     await insertRainfall();
 
-    console.log("🎉 Seeding complete");
+    console.log("Seeding complete");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Seeding failed:", error);
+    console.error("Seeding failed:", error);
     process.exit(1);
   }
 }
